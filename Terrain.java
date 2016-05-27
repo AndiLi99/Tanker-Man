@@ -17,23 +17,25 @@ public class Terrain extends JPanel implements KeyListener{
 	static ArrayList <SupplyPack> supplyPacks = new ArrayList <SupplyPack>();
 	static ArrayList <Explosion> explosions = new ArrayList <Explosion>();
 
-	static Tank tank;
-	
 	static int [] landX;
 	static int [] landY;
 	static int turnPlayer = 1;
-	
-	
+
+
 	static final int GRAVITY = -8;
 	static final double SECONDS = 1000.0;
-	static final int WIDTH = 952;
-	static final int HEIGHT = 952;
+	static final int WIDTH = 950;
+	static final int HEIGHT = 500;
+	static final double RADS = 0.01745329251;
+	
+	
 	private boolean rotateLeft;
 	private boolean rotateRight;
 	private boolean increasePower;
 	private boolean decreasePower;
 	private boolean moveLeft;
 	private boolean moveRight;
+	private boolean fire;
 
 	// constructor
 	public Terrain (int mapNum) {
@@ -41,18 +43,16 @@ public class Terrain extends JPanel implements KeyListener{
 		landY = new int [952];
 		landX = new int [952];
 		initialMap (mapNum);
-		
-		
+
+
 		Tank testTank = new Tank(500);
-//		testTank.moveTankLeft(1000);
 		tanks.add(testTank);
-		
-		tank = new Tank(100);
-		
+
 		addKeyListener(this);
 		setFocusable(true);
 	}
 
+	//max
 	public static void initialMap (int mapNum) {
 		/*	Map Types: 
 		 * 	#1 - Hill
@@ -74,13 +74,13 @@ public class Terrain extends JPanel implements KeyListener{
 				else 
 					landY[a] = 658;
 
-				landX[a] = a*2;
+				landX[a] = a;
 			}
 		else if (mapNum == 2)	// Exponential map
 			for (int a = 0; a < 950; a++) {
 				landY[a] = 650 - (int)(Math.pow(1.02, a - 600));
 
-				landX[a] = a*2;
+				landX[a] = a;
 			}
 		else if (mapNum == 3)	// Flat Hill
 			for (int a = 0; a < 950; a++) {
@@ -91,7 +91,7 @@ public class Terrain extends JPanel implements KeyListener{
 				else
 					landY[a] = 500 - 5*(a - 910);
 
-				landX[a] = a*2;
+				landX[a] = a;
 			}
 		else if (mapNum == 4)	// Draw stair steps
 			for (int a = 0; a < 950; a++) {
@@ -138,7 +138,7 @@ public class Terrain extends JPanel implements KeyListener{
 				else
 					landY[a] = 100;
 
-				landX[a] = a*2;
+				landX[a] = a;
 			}
 		else if (mapNum == 5)	// Draw empire map
 			for (int a = 0; a < 950; a++) {
@@ -201,24 +201,19 @@ public class Terrain extends JPanel implements KeyListener{
 				else 
 					landY[a] = 300;
 
-				landX[a] = a*2;
+				landX[a] = a;
 			}
 
+		for (int a = 0; a < 950; a++) {
+			landY[a] = landY[a]/2;
+		}
 		landY[950] = 730;
 		landY[951] = 730;
-		landX[950] = 1900;
+		landX[950] = 950;
 		landX[951] = 0;
 	}
 
-	
-	
-	public static Tank getCurrentPlayer (){
-		for (Tank t: tanks){
-			if (t.playerID == turnPlayer)
-				return t;
-			}
-		return new Tank(500);
-	}
+
 
 	public void fireProjectile (Tank t, int projectileID){
 		projectiles.add(new Projectile (t.x, t.y, t.power, t.aimAngle));
@@ -226,7 +221,8 @@ public class Terrain extends JPanel implements KeyListener{
 	}
 
 	public void moveProjectiles (int elapsedTime){
-		for (Projectile p: projectiles){
+		for (int i = 0; i < projectiles.size(); i ++){
+			Projectile p = projectiles.get(i);
 			p.moveProjectile(elapsedTime);		
 
 			if (p.isHit()){
@@ -234,25 +230,50 @@ public class Terrain extends JPanel implements KeyListener{
 			}
 		}		
 	}
-	
+
 	public void moveTanks (int elapsedTime){
-		Tank t = getCurrentPlayer();
-		
-		if (moveLeft){
-			tank.moveTankLeft(elapsedTime);
-			tank.changeTankAngle();
-			System.out.println("trying to move");	
+		for (Tank t: tanks){
+			if (t.canMove()){
+				if (moveLeft){
+					t.moveTankLeft(elapsedTime);
+					System.out.println("trying to move left");	
+				}
+				else if (moveRight){
+					t.moveTankRight(elapsedTime);
+					System.out.println("trying to move right");		
+				}
+				
+				if (rotateLeft){
+					t.moveTankAngleCCW();
+					System.out.println("trying to rotate left");
+				}
+				else if (rotateRight){
+					t.moveTankAngleCW();
+				}
+				
+				if (fire){
+					System.out.println("Hello");
+					spawnProjectile (t);
+					fire = false;
+				}
+				
+			}
 		}
-		else if (moveRight)
-			tank.moveTankRight(elapsedTime);
 	}
 	
+	
+	public void spawnProjectile (Tank t){
+		Projectile p = new Projectile (t.x, t.y, t.power, t.aimAngle);
+		projectiles.add (p);
+	}
+
 	public void moveSupplyPacks (int elapsedTime){
 		for (SupplyPack s: supplyPacks){
 			if (!s.isLanded())
 				s.moveSupplyPack(elapsedTime);
 		}
 	}
+
 
 	public void spawnSupplyPack (){
 		Random r = new Random();
@@ -324,25 +345,42 @@ public class Terrain extends JPanel implements KeyListener{
 	}
 
 	public void paintComponent (Graphics g){
-		g.setColor(Color.black);
-		g.fillRect(0,0,Terrain.HEIGHT, Terrain.WIDTH);
-		
-		
 		Graphics2D g2 = (Graphics2D) g;
+		//draw sky
+		g.setColor(Color.black);
+		g.fillRect(0,0,Terrain.WIDTH, Terrain.HEIGHT);
+
+		//draw land	
 		g2.setPaint(new GradientPaint(0, 0,  new Color (124, 203, 255), 0, 730, new Color (11, 50, 75)));
 		g2.fillPolygon(Terrain.landX, Terrain.landY, 952);	// Draw polygon containing land
 
+		//draw projectiles
 		g.setColor(Color.white);
 		for (Projectile p: projectiles){
 			g.fillOval((int)p.x, (int)p.y, p.radius, p.radius);
 		}
 
-		g.setColor(Color.blue);
 		for (Tank t: tanks){
-			g.fillRect((int)t.x-Tank.LENGTH/2, (int)t.y-Tank.HEIGHT/2, Tank.LENGTH, Tank.HEIGHT);
+			int dy;
+			double angle;
+			
+			//draws the cannon arm
+			g2.setColor (Color.white);
+			g2.rotate(t.aimAngle*RADS, t.x, t.y);
+			g2.fillRect((int)t.x, (int)t.y, 15, 4);
+			
+			
+			//draws the tank body
+			g2.setColor(Color.blue);
+			dy = Terrain.getY((int)t.x + 5) - Terrain.getY((int)t.x - 5) ;
+			angle = Math.atan(dy/10.0);
+
+			g2.rotate(-t.aimAngle*RADS, t.x, t.y);
+			g2.rotate(angle,t.x,t.y);
+			g2.fillRect((int)t.x-Tank.LENGTH/2, (int)t.y-Tank.HEIGHT/2, Tank.LENGTH, Tank.HEIGHT);
+			//			g.fillRect((int)t.x-Tank.LENGTH/2, (int)t.y-Tank.HEIGHT/2, Tank.LENGTH, Tank.HEIGHT);
 		}
-		g.fillRect((int)tank.x-Tank.LENGTH/2, (int)tank.y-Tank.HEIGHT/2, Tank.LENGTH, Tank.HEIGHT);
-		
+
 		g.setColor(Color.red);
 		for (Explosion e: explosions){
 			g.fillOval(e.x, e.y, e.radius, e.radius);
@@ -359,75 +397,80 @@ public class Terrain extends JPanel implements KeyListener{
 		moveSupplyPacks (elapsedTime);
 		incrementExplosions(elapsedTime);
 		moveTanks(elapsedTime);
-		
-		
+
+
 	}
-	
+
 	public void keyPressed(KeyEvent e) {
 
-	    int key = e.getKeyCode();
-System.out.println ("keyPressed");
-	    if (key == KeyEvent.VK_LEFT) {
-	        rotateLeft = true;
-	        rotateRight = false;
-	    }
+		int key = e.getKeyCode();
+		System.out.println ("keyPressed");
+		if (key == KeyEvent.VK_LEFT) {
+			rotateLeft = true;
+			rotateRight = false;
+		}
 
-	    if (key == KeyEvent.VK_RIGHT) {
-	        rotateRight = true;
-	        rotateLeft = false;
-	    }
+		if (key == KeyEvent.VK_RIGHT) {
+			rotateRight = true;
+			rotateLeft = false;
+		}
 
-	    if (key == KeyEvent.VK_UP) {
-	        increasePower = true;
-	        decreasePower = false;
-	    }
+		if (key == KeyEvent.VK_UP) {
+			increasePower = true;
+			decreasePower = false;
+		}
 
-	    if (key == KeyEvent.VK_DOWN) {
-	        decreasePower = true;
-	        increasePower = false;
-	    }
-	    
-	    if (key == KeyEvent.VK_A){
-	    	moveLeft = true;
-	    	moveRight = false;
-	    }
-	    
-	    if (key == KeyEvent.VK_D){
-	    	moveRight = true;
-	    	moveLeft = false;
-	    }
+		if (key == KeyEvent.VK_DOWN) {
+			decreasePower = true;
+			increasePower = false;
+		}
+
+		if (key == KeyEvent.VK_A){
+			moveLeft = true;
+			moveRight = false;
+		}
+
+		if (key == KeyEvent.VK_D){
+			moveRight = true;
+			moveLeft = false;
+		}
+		
+		if (key == KeyEvent.VK_SPACE){
+			fire = true;
+		}
+		
 	}
-	
+
 	public void keyTyped (KeyEvent e){
 	}
-	
-    public void keyReleased(KeyEvent e) {
-        
-        int key = e.getKeyCode();
 
-	    if (key == KeyEvent.VK_LEFT) {
-	        rotateLeft = false;
-	    }
+	public void keyReleased(KeyEvent e) {
 
-	    if (key == KeyEvent.VK_RIGHT) {
-	        rotateRight = false;
-	    }
+		int key = e.getKeyCode();
 
-	    if (key == KeyEvent.VK_UP) {
-	        increasePower = false;
-	    }
+		if (key == KeyEvent.VK_LEFT) {
+			rotateLeft = false;
+		}
 
-	    if (key == KeyEvent.VK_DOWN) {
-	        decreasePower = false;
-	    }
-	    
-	    if (key == KeyEvent.VK_A){
-	    	moveLeft = false;
-	    }
-	    
-	    if (key == KeyEvent.VK_D){
-	    	moveRight = false;
-	    }
-    }
-	
+		if (key == KeyEvent.VK_RIGHT) {
+			rotateRight = false;
+		}
+
+		if (key == KeyEvent.VK_UP) {
+			increasePower = false;
+		}
+
+		if (key == KeyEvent.VK_DOWN) {
+			decreasePower = false;
+		}
+
+		if (key == KeyEvent.VK_A){
+			moveLeft = false;
+		}
+
+		if (key == KeyEvent.VK_D){
+			moveRight = false;
+		}
+	}
+
 }

@@ -17,7 +17,7 @@ public class Tank {
 	
 
 	//how fast the tank can move
-	static final double SPEED = 1.0;
+	static final double SPEED = 15.0;
 	static final double CANNONSPEED = 0.5;
 	static final int LENGTH = 20;
 	static final int HEIGHT = 10;
@@ -25,34 +25,38 @@ public class Tank {
 	public Tank (int x){
 		fuel = 100;
 		aimAngle = 0;
-		power = 100;
+		power = 1000;
 		this.x = x;
 		this.y = Terrain.getY(x);
 		weapons = new int[16];
 		playerID =1 ;
 	}
 
+	public boolean canMove(){
+	if (this.x < Terrain.WIDTH && this.x > 0  && Terrain.projectiles.size() == 0 && this.playerID == Terrain.turnPlayer){
+		return true;
+	}
+	else
+		return false;
+}
 
-
-	public void changeTankAngleCW (){
+	public void moveTankAngleCW (){
 		if (aimAngle + CANNONSPEED < 360)
 			aimAngle += CANNONSPEED;
 		else
 			aimAngle = CANNONSPEED;
+		
+		System.out.println(aimAngle);
 	}
 
-	public void changeTankAngleCCW (){
+	public void moveTankAngleCCW (){
 		if (aimAngle - CANNONSPEED > 0)
 			aimAngle -= CANNONSPEED;
 		else
-			aimAngle = -CANNONSPEED;
+			aimAngle = 360;
+		System.out.println(aimAngle);
 	}
 
-	public void changeTankAngle (){
-		System.out.println("ehl");
-
-
-	}
 	public void moveTankLeft (int elapsedTime){
 		x -= SPEED*elapsedTime/Terrain.SECONDS;
 		y = Terrain.getY((int)x);

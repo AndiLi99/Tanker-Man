@@ -57,6 +57,7 @@ public class Screen {
 		
 		while (true) {
 			int elapsedTime = (int)(System.currentTimeMillis() - currTime);
+			currTime = System.currentTimeMillis();
 			
 			terrain.updateGame(elapsedTime);
 			terrain.repaint();
