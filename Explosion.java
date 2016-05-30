@@ -23,7 +23,7 @@ public class Explosion {
 	}
 	
 	public boolean shouldRemove (){
-		if (timeLeft < 0)
+		if (timeLeft <= 0)
 			return true;
 		else
 			return false;

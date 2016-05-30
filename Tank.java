@@ -17,15 +17,15 @@ public class Tank {
 	
 
 	//how fast the tank can move
-	static final double SPEED = 15.0;
-	static final double CANNONSPEED = 0.5;
+	static final double SPEED = 35.0;
+	static final double CANNONSPEED = 1.0;
 	static final int LENGTH = 20;
 	static final int HEIGHT = 10;
 
 	public Tank (int x){
 		fuel = 100;
 		aimAngle = 0;
-		power = 1000;
+		power = 250;
 		this.x = x;
 		this.y = Terrain.getY(x);
 		weapons = new int[16];

@@ -7,6 +7,8 @@ import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Random;
 
 import javax.swing.JPanel;
@@ -22,7 +24,7 @@ public class Terrain extends JPanel implements KeyListener{
 	static int turnPlayer = 1;
 
 
-	static final int GRAVITY = -8;
+	static final double GRAVITY = 100.0;
 	static final double SECONDS = 1000.0;
 	static final int WIDTH = 950;
 	static final int HEIGHT = 500;
@@ -216,7 +218,7 @@ public class Terrain extends JPanel implements KeyListener{
 
 
 	public void fireProjectile (Tank t, int projectileID){
-		projectiles.add(new Projectile (t.x, t.y, t.power, t.aimAngle));
+		projectiles.add(new Projectile (t.x, t.y-100, t.power, t.aimAngle));
 
 	}
 
@@ -306,11 +308,20 @@ public class Terrain extends JPanel implements KeyListener{
 	}
 
 	public void incrementExplosions (int elapsedTime){
+		List <Explosion> list = new ArrayList<Explosion>();
+		
+//		for (Iterator<Explosion> iterator = list.iterator(); iterator.hasNext();) {
+//		    Explosion e = iterator.next();
+//		    if (e.shouldRemove()) {
+//		        // Remove the current element from the iterator and the list.
+//		        iterator.remove();
+//		    }
+//		}
+		
 		for (Explosion e: explosions){
 			e.incrementTime(elapsedTime);
-
+			System.out.println("Time Left for explosion: " + e.timeLeft);
 			if (e.shouldRemove()){
-				explosions.remove(e);			
 				e = null;
 			}
 		}
@@ -357,7 +368,7 @@ public class Terrain extends JPanel implements KeyListener{
 		//draw projectiles
 		g.setColor(Color.white);
 		for (Projectile p: projectiles){
-			g.fillOval((int)p.x, (int)p.y, p.radius, p.radius);
+			g.fillOval((int)p.x+p.radius/2, (int)p.y-p.radius/2, p.radius, p.radius);
 		}
 
 		for (Tank t: tanks){
@@ -367,7 +378,7 @@ public class Terrain extends JPanel implements KeyListener{
 			//draws the cannon arm
 			g2.setColor (Color.white);
 			g2.rotate(t.aimAngle*RADS, t.x, t.y);
-			g2.fillRect((int)t.x, (int)t.y, 15, 4);
+			g2.fillRect((int)t.x+Tank.LENGTH/2, (int)t.y-Tank.HEIGHT/2, 15, 4);
 			
 			
 			//draws the tank body
@@ -377,13 +388,13 @@ public class Terrain extends JPanel implements KeyListener{
 
 			g2.rotate(-t.aimAngle*RADS, t.x, t.y);
 			g2.rotate(angle,t.x,t.y);
-			g2.fillRect((int)t.x-Tank.LENGTH/2, (int)t.y-Tank.HEIGHT/2, Tank.LENGTH, Tank.HEIGHT);
+			g2.fillRect((int)t.x+Tank.LENGTH/2, (int)t.y-Tank.HEIGHT/2, Tank.LENGTH, Tank.HEIGHT);
 			//			g.fillRect((int)t.x-Tank.LENGTH/2, (int)t.y-Tank.HEIGHT/2, Tank.LENGTH, Tank.HEIGHT);
 		}
 
 		g.setColor(Color.red);
 		for (Explosion e: explosions){
-			g.fillOval(e.x, e.y, e.radius, e.radius);
+			g.fillOval(e.x+e.radius/2, e.y-e.radius/2, e.radius, e.radius);
 		}
 
 		g.setColor(Color.gray);
