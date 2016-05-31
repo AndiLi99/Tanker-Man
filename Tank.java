@@ -71,36 +71,12 @@ public class Tank {
 		System.out.println(x);
 	}
 
-	//	public class mouse implements MouseListener () {
-	//		
-	//	}
-
-	//	public void mouseClicked(MouseEvent arg0) {
-	//		locX = arg0.getX();
-	//		locY = arg0.getY();
-	//		
-	//		if (check on screen)
-	//			
-	//	}
-
-	public void mouseEntered(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void mouseExited(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void mousePressed(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void mouseReleased(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-
+	public void changePower (boolean increase){
+		if (increase){
+			power+= 1;
+		}
+		else
+			power -=1;
 	}
 
 

@@ -8,7 +8,7 @@ public class Projectile {
 	
 	int radius = 20;
 	int damage = 10;
-	int explosion = 50;
+	int explosion = 70 ;
 	
 			
 	
@@ -33,8 +33,10 @@ public class Projectile {
 	}
 	
 	public boolean isHit (){
-		if (this.y >= Terrain.getY((int)x)) return true;
-		return false; 
+		if (this.y >= Terrain.getY((int)x) || this.x < 0 || this.x > Terrain.WIDTH) 
+			return true;
+		else
+			return false; 
 	}
 	
 	

@@ -254,9 +254,21 @@ public class Terrain extends JPanel implements KeyListener{
 				}
 				
 				if (fire){
-					System.out.println("Hello");
+					System.out.println("Weapon fired");
 					spawnProjectile (t);
 					fire = false;
+				}
+				
+				if (increasePower){
+					//true means power is increased
+					t.changePower(true);
+					System.out.println("Power = " + t.power);
+				}
+				
+				else if (decreasePower){
+					// false means power is decreased
+					t.changePower(false);
+					System.out.println("Power = " + t.power);
 				}
 				
 			}
@@ -295,50 +307,44 @@ public class Terrain extends JPanel implements KeyListener{
 
 	//damages tank within an area
 	public void explodeProjectile (Projectile p){
-		if (p.isHit()){
-			ArrayList <Tank> tanksHit = getTanksHit(p);
-			for (Tank aTank : tanksHit) {
-				if (distanceBetween (aTank.x, aTank.y, p.x, p.y) < p.radius)
-					aTank.health -= p.damage;
+		Explosion e = new Explosion (p);
+		explosions.add (e);
+		projectiles.remove(p);
+		
+		ArrayList <Tank> tanksHit = getTanksHit(e);
+		for (Tank aTank : tanks) {
+			if (distanceBetween (aTank.x, aTank.y, e.x, e.y) < e.radius){
+				aTank.health -= e.damage;
+				System.out.println("Tank hit!");
 			}
 		}
-		explosions.add (new Explosion (p));
-		projectiles.remove(p);
-		p = null;
 	}
 
 	public void incrementExplosions (int elapsedTime){
 		List <Explosion> list = new ArrayList<Explosion>();
 		
-//		for (Iterator<Explosion> iterator = list.iterator(); iterator.hasNext();) {
-//		    Explosion e = iterator.next();
-//		    if (e.shouldRemove()) {
-//		        // Remove the current element from the iterator and the list.
-//		        iterator.remove();
-//		    }
-//		}
 		
-		for (Explosion e: explosions){
-			e.incrementTime(elapsedTime);
-			System.out.println("Time Left for explosion: " + e.timeLeft);
-			if (e.shouldRemove()){
-				e = null;
-			}
+		for (int i = 0; i < explosions.size(); i++){
+			explosions.get(i).incrementTime(elapsedTime);
+			System.out.println("Time Left for explosion: " + explosions.get(i).timeLeft);
+			
+			if (explosions.get(i).shouldRemove())
+				explosions.remove(i);
 		}
 
 	}
 
 	//find the distance between two points
-	public double distanceBetween (double x1, double x2, double y1, double y2){
+	public double distanceBetween (double x1, double y1, double x2, double y2){
 		return Math.sqrt ((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2));
 	}
 
 	//find all tanks within a certain radius
-	public ArrayList <Tank> getTanksHit (Projectile p){
+	public ArrayList <Tank> getTanksHit (Explosion e){
 		ArrayList <Tank> result = new ArrayList <Tank>();
 
 		for (Tank aTank : tanks) {
-			if (distanceBetween (aTank.x, aTank.y, p.x, p.y) < p.radius)
+			if (distanceBetween (aTank.x, aTank.y, e.x, e.y) < e.radius)
 				result.add (aTank);
 		}
 		return result;		
@@ -415,7 +421,6 @@ public class Terrain extends JPanel implements KeyListener{
 	public void keyPressed(KeyEvent e) {
 
 		int key = e.getKeyCode();
-		System.out.println ("keyPressed");
 		if (key == KeyEvent.VK_LEFT) {
 			rotateLeft = true;
 			rotateRight = false;

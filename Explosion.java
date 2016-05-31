@@ -3,21 +3,20 @@ package org.tankermanz;
 public class Explosion {
 	int radius;
 	int timeLeft;
+	int damage;
 	int x;
 	int y;
 	
 	public Explosion(Projectile p) {
 		radius = p.explosion;
+		//in ms
 		timeLeft = 1000;
-		this.x = (int)p.x;
-		this.y = (int)p.y;
+		x = (int)p.x;
+		y = (int)p.y;
+		damage = p.damage;
 	}
 
 	public void incrementTime (int elapsedTime){
-		if (timeLeft - elapsedTime < 0){
-			timeLeft = 0;
-		}
-		else
 			timeLeft -= elapsedTime;
 		
 	}
