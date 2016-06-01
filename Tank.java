@@ -22,18 +22,18 @@ public class Tank {
 	static final int LENGTH = 20;
 	static final int HEIGHT = 10;
 
-	public Tank (int x){
+	public Tank (int x, int playerID){
 		fuel = 100;
 		aimAngle = 0;
 		power = 250;
 		this.x = x;
 		this.y = Terrain.getY(x);
 		weapons = new int[16];
-		playerID =1 ;
+		this.playerID = playerID;
 	}
 
 	public boolean canMove(){
-	if (this.x < Terrain.WIDTH && this.x > 0  && Terrain.projectiles.size() == 0 && this.playerID == Terrain.turnPlayer){
+	if (this.x + 10 < Terrain.WIDTH && this.x - 10 > 0  && Terrain.projectiles.size() == 0 && Terrain.explosions.size() == 0 && this.playerID == Terrain.turnPlayer){
 		return true;
 	}
 	else

@@ -6,6 +6,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -29,7 +30,7 @@ public class Terrain extends JPanel implements KeyListener{
 	static final int WIDTH = 950;
 	static final int HEIGHT = 500;
 	static final double RADS = 0.01745329251;
-	
+	static int numPlayers;
 	
 	private boolean rotateLeft;
 	private boolean rotateRight;
@@ -46,10 +47,15 @@ public class Terrain extends JPanel implements KeyListener{
 		landX = new int [952];
 		initialMap (mapNum);
 
-
-		Tank testTank = new Tank(500);
-		tanks.add(testTank);
-
+		numPlayers = 8;
+		
+		for (int i = 0; i < numPlayers; i++){
+			//(int xLocation, int playerID)
+			Tank tank = new Tank((i+1)*100, i+1);
+			tanks.add(tank);
+			
+		}
+		
 		addKeyListener(this);
 		setFocusable(true);
 	}
@@ -218,8 +224,14 @@ public class Terrain extends JPanel implements KeyListener{
 
 
 	public void fireProjectile (Tank t, int projectileID){
-		projectiles.add(new Projectile (t.x, t.y-100, t.power, t.aimAngle));
+		spawnProjectile(t);
+		if (turnPlayer == numPlayers){
+			turnPlayer = 1;
 
+		}
+		else
+			turnPlayer ++;
+		System.out.println("Turn Player: " + turnPlayer);
 	}
 
 	public void moveProjectiles (int elapsedTime){
@@ -255,7 +267,7 @@ public class Terrain extends JPanel implements KeyListener{
 				
 				if (fire){
 					System.out.println("Weapon fired");
-					spawnProjectile (t);
+					fireProjectile (t, 1);
 					fire = false;
 				}
 				
@@ -292,8 +304,6 @@ public class Terrain extends JPanel implements KeyListener{
 	public void spawnSupplyPack (){
 		Random r = new Random();
 		supplyPacks.add (new SupplyPack (100, 0, 1));
-
-
 
 	}
 
@@ -363,6 +373,7 @@ public class Terrain extends JPanel implements KeyListener{
 
 	public void paintComponent (Graphics g){
 		Graphics2D g2 = (Graphics2D) g;
+		AffineTransform resetForm = g2.getTransform();
 		//draw sky
 		g.setColor(Color.black);
 		g.fillRect(0,0,Terrain.WIDTH, Terrain.HEIGHT);
@@ -381,26 +392,29 @@ public class Terrain extends JPanel implements KeyListener{
 			int dy;
 			double angle;
 			
+			g2.setTransform (resetForm);
 			//draws the cannon arm
 			g2.setColor (Color.white);
-			g2.rotate(t.aimAngle*RADS, t.x, t.y);
+			g2.rotate(t.aimAngle*RADS, t.x+Tank.LENGTH/2, t.y-Tank.HEIGHT/2);
 			g2.fillRect((int)t.x+Tank.LENGTH/2, (int)t.y-Tank.HEIGHT/2, 15, 4);
 			
 			
 			//draws the tank body
 			g2.setColor(Color.blue);
-			dy = Terrain.getY((int)t.x + 5) - Terrain.getY((int)t.x - 5) ;
-			angle = Math.atan(dy/10.0);
+			dy = Terrain.getY((int)t.x + 2) - Terrain.getY((int)t.x - 2) ;
+			angle = Math.atan(dy/4);
 
-			g2.rotate(-t.aimAngle*RADS, t.x, t.y);
-			g2.rotate(angle,t.x,t.y);
+			g2.setTransform (resetForm);
+			g2.rotate(angle,t.x+Tank.LENGTH/2,t.y-Tank.HEIGHT/2);
 			g2.fillRect((int)t.x+Tank.LENGTH/2, (int)t.y-Tank.HEIGHT/2, Tank.LENGTH, Tank.HEIGHT);
 			//			g.fillRect((int)t.x-Tank.LENGTH/2, (int)t.y-Tank.HEIGHT/2, Tank.LENGTH, Tank.HEIGHT);
 		}
+		
+		
 
 		g.setColor(Color.red);
 		for (Explosion e: explosions){
-			g.fillOval(e.x+e.radius/2, e.y-e.radius/2, e.radius, e.radius);
+			g.fillOval(e.x-e.radius/2, e.y-e.radius/2, e.radius, e.radius);
 		}
 
 		g.setColor(Color.gray);

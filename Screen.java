@@ -22,7 +22,7 @@ public class Screen {
 	static Terrain terrain;
 	static Control control;
 	
-	static int startMap = 2;
+	static int startMap = 5;
 	static final int DELAY = 20;
 	
 	public static void main (String args[]){
