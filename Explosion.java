@@ -14,6 +14,9 @@ public class Explosion {
 		x = (int)p.x;
 		y = (int)p.y;
 		damage = p.damage;
+		
+		Terrain.terrainDestruction(x, radius, Terrain.CIRCLE_DESTRUCTION);
+		
 	}
 
 	public void incrementTime (int elapsedTime){

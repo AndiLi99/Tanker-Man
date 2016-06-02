@@ -6,6 +6,9 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -14,7 +17,7 @@ import java.util.Random;
 
 import javax.swing.JPanel;
 
-public class Terrain extends JPanel implements KeyListener{
+public class Terrain extends JPanel implements KeyListener, MouseMotionListener, MouseListener{
 	static ArrayList <Projectile> projectiles = new ArrayList <Projectile>();
 	static ArrayList <Tank> tanks = new ArrayList <Tank>();
 	static ArrayList <SupplyPack> supplyPacks = new ArrayList <SupplyPack>();
@@ -38,8 +41,13 @@ public class Terrain extends JPanel implements KeyListener{
 	private boolean decreasePower;
 	private boolean moveLeft;
 	private boolean moveRight;
-	private boolean fire;
-
+	static boolean fire;
+	
+	static int mouseX = 0;
+	static int mouseY = 0;
+	
+	static final int CIRCLE_DESTRUCTION = 0;
+	
 	// constructor
 	public Terrain (int mapNum) {
 
@@ -47,7 +55,7 @@ public class Terrain extends JPanel implements KeyListener{
 		landX = new int [952];
 		initialMap (mapNum);
 
-		numPlayers = 8;
+		numPlayers = 3;
 		
 		for (int i = 0; i < numPlayers; i++){
 			//(int xLocation, int playerID)
@@ -58,6 +66,8 @@ public class Terrain extends JPanel implements KeyListener{
 		
 		addKeyListener(this);
 		setFocusable(true);
+		addMouseMotionListener(this);
+		addMouseListener(this);
 	}
 
 	//max
@@ -221,7 +231,54 @@ public class Terrain extends JPanel implements KeyListener{
 		landX[951] = 0;
 	}
 
+	public static void terrainDestruction (int locationX, int power, int type) {
+		int yMid = landY[locationX];	// Middle of attack
 
+		if (type == 0) { // Circular destruction
+			//****************** make it so that it does not destroy steep walls completely 
+
+			for (int a = locationX - power; a <= locationX + power; a++) {
+				if (a < 0)	// set drawing start to 0
+					a = 0;
+				if (a >= 950) // when array reaches over 1000, stop redrawing terrain
+					break;
+				
+				
+				else {
+					int yPos = yMid + (int)Math.sqrt(power*power - (a - locationX)*(a - locationX)); 
+					// Find y destruction value (creates downwards semicircle)
+					if (yPos > landY[a]) {
+						landY[a] = yPos;	// Reset current land value if previous is greater (above) new one
+					}
+					if (landY[a] > 700)	// Set minimum ground level
+						landY[a] = 700;
+				}
+			}
+
+			for (int a = locationX - 4; a >= locationX - power - 125; a--) {	// Loop for area close to destruction
+				if (a < 0)
+					break;
+				int slope = -(landY[a] - landY[a + 3]);	// ABS value of slope on left side of hole
+
+				if (slope < 0)							// Once no longer part of hole, break;
+					break;
+				else if (slope > 96)							// If slope is too great, lessen it
+					landY[a] = landY[a + 1] - 32;
+			}
+
+			for (int a = locationX + 4; a <= locationX + power + 125; a++) {
+				if (a > 949)
+					break;
+
+				int slope = -(landY[a] - landY[a - 3]);
+
+				if (slope < 0)							// Once no longer part of hole, break;
+					break;
+				else if (slope > 96)
+					landY[a] = landY[a - 1] - 32;
+			}
+		}
+	}
 
 	public void fireProjectile (Tank t, int projectileID){
 		spawnProjectile(t);
@@ -375,8 +432,8 @@ public class Terrain extends JPanel implements KeyListener{
 		Graphics2D g2 = (Graphics2D) g;
 		AffineTransform resetForm = g2.getTransform();
 		//draw sky
-		g.setColor(Color.black);
-		g.fillRect(0,0,Terrain.WIDTH, Terrain.HEIGHT);
+		g2.setPaint(new GradientPaint(0, 0, new Color (1, 1, 13), 0, 730, new Color (4, 8, 55)));	
+		g.fillRect(0, 0, 950, 500); // Draw dark sky background
 
 		//draw land	
 		g2.setPaint(new GradientPaint(0, 0,  new Color (124, 203, 255), 0, 730, new Color (11, 50, 75)));
@@ -385,7 +442,7 @@ public class Terrain extends JPanel implements KeyListener{
 		//draw projectiles
 		g.setColor(Color.white);
 		for (Projectile p: projectiles){
-			g.fillOval((int)p.x+p.radius/2, (int)p.y-p.radius/2, p.radius, p.radius);
+			g.fillOval((int)p.x-p.radius/2, (int)p.y-p.radius/2, p.radius, p.radius);
 		}
 
 		for (Tank t: tanks){
@@ -395,8 +452,8 @@ public class Terrain extends JPanel implements KeyListener{
 			g2.setTransform (resetForm);
 			//draws the cannon arm
 			g2.setColor (Color.white);
-			g2.rotate(t.aimAngle*RADS, t.x+Tank.LENGTH/2, t.y-Tank.HEIGHT/2);
-			g2.fillRect((int)t.x+Tank.LENGTH/2, (int)t.y-Tank.HEIGHT/2, 15, 4);
+			g2.rotate(t.aimAngle*RADS, t.x, t.y);
+			g2.fillRect((int)t.x, (int)t.y, 25, 4);
 			
 			
 			//draws the tank body
@@ -405,13 +462,15 @@ public class Terrain extends JPanel implements KeyListener{
 			angle = Math.atan(dy/4);
 
 			g2.setTransform (resetForm);
-			g2.rotate(angle,t.x+Tank.LENGTH/2,t.y-Tank.HEIGHT/2);
-			g2.fillRect((int)t.x+Tank.LENGTH/2, (int)t.y-Tank.HEIGHT/2, Tank.LENGTH, Tank.HEIGHT);
+			g2.rotate(angle,t.x,t.y);
+			g2.fillRect((int)t.x-Tank.LENGTH/2, (int)t.y-Tank.HEIGHT/2, Tank.LENGTH, Tank.HEIGHT);
 			//			g.fillRect((int)t.x-Tank.LENGTH/2, (int)t.y-Tank.HEIGHT/2, Tank.LENGTH, Tank.HEIGHT);
+			g.setColor(Color.red);
+			g.drawRect((int)t.x,(int)t.y,10,10);
 		}
 		
 		
-
+		g2.setTransform(resetForm);
 		g.setColor(Color.red);
 		for (Explosion e: explosions){
 			g.fillOval(e.x-e.radius/2, e.y-e.radius/2, e.radius, e.radius);
@@ -421,6 +480,9 @@ public class Terrain extends JPanel implements KeyListener{
 		for (SupplyPack s: supplyPacks){
 			g.fillRect(s.x, (int)s.y,SupplyPack.WIDTH, SupplyPack.HEIGHT);
 		}
+		
+		g2.setTransform(resetForm);
+		drawControl(g);
 	}
 
 	public void updateGame (int elapsedTime){
@@ -432,43 +494,50 @@ public class Terrain extends JPanel implements KeyListener{
 
 	}
 
+	public boolean tankCanMove (){
+		if (projectiles.size() == 0 && explosions.size() == 0){
+			return true;
+		}
+		return false;
+	}
+	
 	public void keyPressed(KeyEvent e) {
+		if (tankCanMove()){
+			int key = e.getKeyCode();
+			if (key == KeyEvent.VK_LEFT) {
+				rotateLeft = true;
+				rotateRight = false;
+			}
 
-		int key = e.getKeyCode();
-		if (key == KeyEvent.VK_LEFT) {
-			rotateLeft = true;
-			rotateRight = false;
-		}
+			if (key == KeyEvent.VK_RIGHT) {
+				rotateRight = true;
+				rotateLeft = false;
+			}
 
-		if (key == KeyEvent.VK_RIGHT) {
-			rotateRight = true;
-			rotateLeft = false;
-		}
+			if (key == KeyEvent.VK_UP) {
+				increasePower = true;
+				decreasePower = false;
+			}
 
-		if (key == KeyEvent.VK_UP) {
-			increasePower = true;
-			decreasePower = false;
-		}
+			if (key == KeyEvent.VK_DOWN) {
+				decreasePower = true;
+				increasePower = false;
+			}
 
-		if (key == KeyEvent.VK_DOWN) {
-			decreasePower = true;
-			increasePower = false;
-		}
+			if (key == KeyEvent.VK_A){
+				moveLeft = true;
+				moveRight = false;
+			}
 
-		if (key == KeyEvent.VK_A){
-			moveLeft = true;
-			moveRight = false;
-		}
+			if (key == KeyEvent.VK_D){
+				moveRight = true;
+				moveLeft = false;
+			}
 
-		if (key == KeyEvent.VK_D){
-			moveRight = true;
-			moveLeft = false;
+			if (key == KeyEvent.VK_SPACE){
+				fire = true;
+			}
 		}
-		
-		if (key == KeyEvent.VK_SPACE){
-			fire = true;
-		}
-		
 	}
 
 	public void keyTyped (KeyEvent e){
@@ -502,5 +571,60 @@ public class Terrain extends JPanel implements KeyListener{
 			moveRight = false;
 		}
 	}
+	public void mouseClicked(MouseEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void mouseReleased(MouseEvent e) {
+		if (Control.getClickFire() && tankCanMove())
+			fire = true;
+	}
+
+
+	public void mouseMoved(MouseEvent e) {
+		int mouseX = e.getX();
+		int mouseY = e.getY();
+		setMouseXY(mouseX, mouseY);
+	}
+
+
+	private void drawControl(Graphics g) {
+		Control.drawBar(g);
+		Control.drawFireButton(g);
+
+	}
+
+	public void setMouseXY (int mouseX, int mouseY) {
+		this.mouseX = mouseX;
+		this.mouseY = mouseY;
+	}
+	public static int getMouseX () {
+		return mouseX;
+	}
+	public static int getMouseY () {
+		return mouseY;
+	}
+
+	public void mouseDragged(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
 
 }

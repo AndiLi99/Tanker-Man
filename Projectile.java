@@ -6,9 +6,9 @@ public class Projectile {
 	int velocityX;
 	double velocityY;
 	
-	int radius = 20;
+	int radius = 10;
 	int damage = 10;
-	int explosion = 70 ;
+	int explosion = 15 ;
 	
 			
 	
@@ -24,6 +24,7 @@ public class Projectile {
 	//TODO FIX the y velocity, gravity make realistic shots
 	
 	public void moveProjectile (int elapsedTime){
+		elapsedTime= (int)(elapsedTime*1.5);
 		this.x += velocityX * elapsedTime /Terrain.SECONDS;
 //		this.y += (velocityY* elapsedTime /Terrain.SECONDS) - (Terrain.GRAVITY*elapsedTime*elapsedTime/(Terrain.SECONDS*Terrain.SECONDS));
 		this.velocityY += Terrain.GRAVITY*elapsedTime/Terrain.SECONDS;
