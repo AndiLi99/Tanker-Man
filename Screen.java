@@ -22,7 +22,7 @@ public class Screen {
 	static Terrain terrain;
 	static Control control;
 	
-	static int startMap = 3;
+	static int startMap = 1;
 	static final int DELAY = 20;
 	
 	public static void main (String args[]){
@@ -34,7 +34,7 @@ public class Screen {
 		myWindow.setSize(Terrain.WIDTH,Terrain.HEIGHT);
 		myWindow.setResizable (false);
 
-		terrain = new Terrain(startMap);
+		terrain = new Terrain(startMap, 3);
 //		control = new Control();
 		
 		//JPanel myFrame = new JPanel();

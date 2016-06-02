@@ -21,11 +21,13 @@ public class Tank {
 	static final double CANNONSPEED = 1.0;
 	static final int LENGTH = 20;
 	static final int HEIGHT = 10;
+	public static final int MAX_FUEL = 100;
+	public static final int MAX_POWER = 300;
 
 	public Tank (int x, int playerID){
-		fuel = 100;
+		fuel = MAX_FUEL;
 		aimAngle = 0;
-		power = 250;
+		power = 300;
 		this.x = x;
 		this.y = Terrain.getY(x);
 		weapons = new int[16];
@@ -40,35 +42,39 @@ public class Tank {
 		return false;
 }
 
-	public void moveTankAngleCW (){
-		if (aimAngle + CANNONSPEED < 360)
-			aimAngle += CANNONSPEED;
-		else
-			aimAngle = CANNONSPEED;
-		
+	public void moveTankAngle (boolean CW){
+		if (CW){
+			if (aimAngle + CANNONSPEED < 360)
+				aimAngle += CANNONSPEED;
+			else
+				aimAngle = CANNONSPEED;
+		}
+		else if (!CW){
+			if (aimAngle - CANNONSPEED > 0)
+				aimAngle -= CANNONSPEED;
+			else
+				aimAngle = 360;
+			System.out.println(aimAngle);
+		}
+
 		System.out.println(aimAngle);
 	}
 
-	public void moveTankAngleCCW (){
-		if (aimAngle - CANNONSPEED > 0)
-			aimAngle -= CANNONSPEED;
-		else
-			aimAngle = 360;
-		System.out.println(aimAngle);
+	public void dropTank (){
+		y = Terrain.getY((int)x);
 	}
 
-	public void moveTankLeft (int elapsedTime){
-		x -= SPEED*elapsedTime/Terrain.SECONDS;
-		y = Terrain.getY((int)x);
+	public void moveTank (int elapsedTime, boolean left){
+		dropTank();
 		fuel -= SPEED * elapsedTime/Terrain.SECONDS;
-		System.out.println(x);
-	}
+		if (left){
+			x -= SPEED*elapsedTime/Terrain.SECONDS;
+		}
+		else if (!left){
+			x += SPEED*elapsedTime/Terrain.SECONDS;
+		}
+		System.out.println("x of tank: "+ x);
 
-	public void moveTankRight (int elapsedTime){
-		x += SPEED*elapsedTime/Terrain.SECONDS;
-		y = Terrain.getY((int)x);
-		fuel -= SPEED * elapsedTime/Terrain.SECONDS;
-		System.out.println(x);
 	}
 
 	public void changePower (boolean increase){
@@ -77,6 +83,10 @@ public class Tank {
 		}
 		else
 			power -=1;
+	}
+
+	public void setFuel(int fuel) {
+		this.fuel = fuel;		
 	}
 
 

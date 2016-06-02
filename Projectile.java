@@ -34,10 +34,30 @@ public class Projectile {
 	}
 	
 	public boolean isHit (){
-		if (this.y >= Terrain.getY((int)x) || this.x < 0 || this.x > Terrain.WIDTH) 
+		if (this.y >= Terrain.getY((int)x)) 
 			return true;
 		else
 			return false; 
+	}
+	
+	public boolean deleteOnSide(){
+		if (x < 0 && y > Terrain.getY(0) - Terrain.REFLECT_BARRIER_HEIGHT){
+			velocityX = -1*velocityX;
+
+			System.out.println("trying to reflect");
+			return false;
+		}
+		if (x > Terrain.WIDTH && y > Terrain.getY(Terrain.WIDTH) - Terrain.REFLECT_BARRIER_HEIGHT){
+			velocityX = -1*velocityX;
+			
+			System.out.println("Trying to reflect");
+			return false;	
+		}
+		
+		if (x < 0 || x > Terrain.WIDTH)
+			return true;
+		else
+			return false;
 	}
 	
 	

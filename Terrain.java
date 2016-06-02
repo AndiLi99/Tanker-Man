@@ -43,21 +43,25 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 	private boolean moveRight;
 	static boolean fire;
 	
+	
+	
+	
 	static int mouseX = 0;
 	static int mouseY = 0;
 	
 	static final int CIRCLE_DESTRUCTION = 0;
+	public static final int REFLECT_BARRIER_HEIGHT = 50;
 	
 	// constructor
-	public Terrain (int mapNum) {
+	public Terrain (int mapNum, int numPlayers) {
 
 		landY = new int [952];
 		landX = new int [952];
 		initialMap (mapNum);
 
-		numPlayers = 3;
+		this.numPlayers = numPlayers;
 		
-		for (int i = 0; i < numPlayers; i++){
+		for (int i = 0; i < Terrain.numPlayers; i++){
 			//(int xLocation, int playerID)
 			Tank tank = new Tank((i+1)*100, i+1);
 			tanks.add(tank);
@@ -281,14 +285,11 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 	}
 
 	public void fireProjectile (Tank t, int projectileID){
+		//if ID = 1
+		
 		spawnProjectile(t);
-		if (turnPlayer == numPlayers){
-			turnPlayer = 1;
-
-		}
-		else
-			turnPlayer ++;
-		System.out.println("Turn Player: " + turnPlayer);
+		
+		nextTurn();
 	}
 
 	public void moveProjectiles (int elapsedTime){
@@ -296,30 +297,51 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 			Projectile p = projectiles.get(i);
 			p.moveProjectile(elapsedTime);		
 
-			if (p.isHit()){
-				explodeProjectile(p);
+			if (p.deleteOnSide()){
+				projectiles.remove(p);
+				System.out.println("Delete projectile");
 			}
+			
+			else if (p.isHit()){
+				explodeProjectile(p);
+				System.out.println("explode");
+			}
+			System.out.println("looping");
 		}		
+	}
+	
+	public void nextTurn (){
+		if (turnPlayer +1 == numPlayers){
+			turnPlayer = 0;
+
+		}
+		else
+			turnPlayer ++;
+		
+		System.out.println("Turn Player: " + turnPlayer);
+		
+		tanks.get(turnPlayer).setFuel(Tank.MAX_FUEL);
+		
 	}
 
 	public void moveTanks (int elapsedTime){
 		for (Tank t: tanks){
 			if (t.canMove()){
 				if (moveLeft){
-					t.moveTankLeft(elapsedTime);
+					t.moveTank(elapsedTime, true);
 					System.out.println("trying to move left");	
 				}
 				else if (moveRight){
-					t.moveTankRight(elapsedTime);
+					t.moveTank(elapsedTime, false);
 					System.out.println("trying to move right");		
 				}
 				
 				if (rotateLeft){
-					t.moveTankAngleCCW();
+					t.moveTankAngle(false);
 					System.out.println("trying to rotate left");
 				}
 				else if (rotateRight){
-					t.moveTankAngleCW();
+					t.moveTankAngle(true);
 				}
 				
 				if (fire){
@@ -378,8 +400,8 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 		explosions.add (e);
 		projectiles.remove(p);
 		
-		ArrayList <Tank> tanksHit = getTanksHit(e);
 		for (Tank aTank : tanks) {
+			aTank.dropTank();
 			if (distanceBetween (aTank.x, aTank.y, e.x, e.y) < e.radius){
 				aTank.health -= e.damage;
 				System.out.println("Tank hit!");
