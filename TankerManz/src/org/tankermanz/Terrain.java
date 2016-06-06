@@ -475,6 +475,7 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 			g.fillOval((int)p.x-p.radius/2, (int)p.y-p.radius/2, p.radius, p.radius);
 		}
 
+		
 		//draw tanks
 		for (Tank t: tanks){
 			int dy;
