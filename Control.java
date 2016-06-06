@@ -72,6 +72,8 @@ public class Control extends JPanel{
 	//	}
 	//	}
 
+	static int controlPanelHeight = 150;
+	static int controlPanelY = 350;
 	static int fireBoxX = 350; 	// Left corner X coord of fire box
 	static int fireBoxY = 375;	// Left corner Y coord of fire box
 	static int fireBoxLength = 200;	// Length of box
@@ -81,8 +83,8 @@ public class Control extends JPanel{
 
 	public static void drawBar (Graphics g) {
 		Graphics2D g2 = (Graphics2D) g;	
-		g2.setPaint(new GradientPaint(0, 350,  new Color (66, 66, 66), 0, 500, new Color (44, 44, 44)));
-		g.fillRect(0, 350, 950, 500);	// Draw grey control bar
+		g2.setPaint(new GradientPaint(0, controlPanelY,  new Color (66, 66, 66), 0, controlPanelY + controlPanelHeight, new Color (44, 44, 44)));
+		g.fillRect(0, controlPanelY, Terrain.LENGTH, controlPanelY+controlPanelHeight);	// Draw grey control bar
 	}
 
 	public static void drawFireButton (Graphics g) {

@@ -6,9 +6,9 @@ public class Projectile {
 	int velocityX;
 	double velocityY;
 	
-	int radius = 10;
+	int radius = 3;
 	int damage = 10;
-	int explosion = 15 ;
+	int explosion = 50 ;
 	
 			
 	
@@ -39,25 +39,29 @@ public class Projectile {
 		else
 			return false; 
 	}
-	
+
 	public boolean deleteOnSide(){
 		if (x < 0 && y > Terrain.getY(0) - Terrain.REFLECT_BARRIER_HEIGHT){
-			velocityX = -1*velocityX;
-
-			System.out.println("trying to reflect");
-			return false;
-		}
-		if (x > Terrain.WIDTH && y > Terrain.getY(Terrain.WIDTH) - Terrain.REFLECT_BARRIER_HEIGHT){
-			velocityX = -1*velocityX;
-			
-			System.out.println("Trying to reflect");
 			return false;	
 		}
-		
-		if (x < 0 || x > Terrain.WIDTH)
+		if (x > Terrain.LENGTH && y > Terrain.getY(Terrain.LENGTH) - Terrain.REFLECT_BARRIER_HEIGHT){
+			return false;	
+		}
+
+		if (x < 0 || x > Terrain.LENGTH)
 			return true;
 		else
 			return false;
+	}
+
+	public boolean reflectOnSide() {
+		if (x < 0 && y > Terrain.getY(0) - Terrain.REFLECT_BARRIER_HEIGHT){
+			return true;
+		}
+		if (x > Terrain.LENGTH && y > Terrain.getY(Terrain.LENGTH) - Terrain.REFLECT_BARRIER_HEIGHT){
+			return true;	
+		}
+		return false;
 	}
 	
 	

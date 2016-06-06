@@ -22,8 +22,8 @@ public class Screen {
 	static Terrain terrain;
 	static Control control;
 	
-	static int startMap = 1;
-	static final int DELAY = 20;
+	static int startMap = 3;
+	static final int DELAY = 5;
 	
 	public static void main (String args[]){
 		Timer animationTimer = new Timer(DELAY, animate);
@@ -31,7 +31,7 @@ public class Screen {
 		
 		JFrame myWindow = new JFrame ();
 		myWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		myWindow.setSize(Terrain.WIDTH,Terrain.HEIGHT);
+		myWindow.setSize(Terrain.LENGTH,Terrain.HEIGHT);
 		myWindow.setResizable (false);
 
 		terrain = new Terrain(startMap, 3);
@@ -44,7 +44,7 @@ public class Screen {
 //		myWindow.add(myFrame);
 		myWindow.setVisible(true);
 
-//		animationTimer.start();
+		animationTimer.start();
 		gameLoop();
 		
 		
@@ -60,9 +60,8 @@ public class Screen {
 			currTime = System.currentTimeMillis();
 			
 			terrain.updateGame(elapsedTime);
-			terrain.repaint();
-			try {
-				Thread.sleep(20);
+				try {
+				Thread.sleep(DELAY);
 			}catch (InterruptedException e){
 			
 			}
@@ -72,9 +71,7 @@ public class Screen {
 	
 	static ActionListener animate = new ActionListener(){
 	public void actionPerformed(ActionEvent arg0) {
-		
 		terrain.repaint();
-		System.out.println ("repainting");
 		}
 	};
 }
