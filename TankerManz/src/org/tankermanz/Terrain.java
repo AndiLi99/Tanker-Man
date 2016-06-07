@@ -42,7 +42,11 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 	private boolean decreasePower;
 	private boolean moveLeft;
 	private boolean moveRight;
+	static boolean changeWeaponRight;
+	static boolean changeWeaponLeft;
 	static boolean fire;
+	
+	private boolean released;
 	
 	
 	
@@ -287,17 +291,29 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 		}
 	}
 
-	public void fireProjectile (Tank t, int projectileID){
-		//if ID = 1
+	public void fireProjectile (Tank t){
+		boolean weaponFired = false;
+		if (t.getCurrentWeapon() == Projectile.BULLET_PROJECTILE){
+			projectiles.add (new BulletProjectile (t.x, t.y, t.power, t.aimAngle));
+			weaponFired = true;
+		}
+		else if (t.getCurrentWeapon() == Projectile.SHOTGUN_PROJECTILE){
+			if (t.weapons[Projectile.SHOTGUN_PROJECTILE] > 0){
+				spawnProjectile(t.x,t.y,t.power,t.aimAngle);
+				spawnProjectile(t.x,t.y,t.power,t.aimAngle+5);
+				spawnProjectile(t.x,t.y,t.power,t.aimAngle-5);
+				t.weapons[Projectile.SHOTGUN_PROJECTILE] --;
+				weaponFired = true;
+			}
+		}
 		
-		spawnProjectile(t.x,t.y,t.power,t.aimAngle);
-		spawnProjectile(t.x,t.y,t.power,t.aimAngle+5);
-		spawnProjectile(t.x,t.y,t.power,t.aimAngle-5);
-		nextTurn();
+		if (weaponFired){
+			nextTurn();	
+		}	
 	}
 
 	public void moveProjectiles (int elapsedTime){
-		for (int i = 0; i < projectiles.size(); i ++){
+		for (int i = projectiles.size()-1; i >= 0; i--){
 			Projectile p = projectiles.get(i);
 			p.moveProjectile(elapsedTime);		
 
@@ -355,7 +371,7 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 				
 				if (fire){
 					System.out.println("Weapon fired");
-					fireProjectile (t, 1);
+					fireProjectile (t);
 				}
 				
 				if (increasePower){
@@ -369,6 +385,16 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 					t.changePower(false);
 					System.out.println("Power = " + t.power);
 				}
+				
+				if (changeWeaponRight){
+					t.changeWeapon(true);
+					changeWeaponRight = false;
+				}
+				else if (changeWeaponLeft){
+					t.changeWeapon(false);
+					changeWeaponLeft = false;
+				}
+				
 				
 			}
 		}
@@ -418,10 +444,9 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 	}
 
 	public void incrementExplosions (int elapsedTime){
-		List <Explosion> list = new ArrayList<Explosion>();
 		
 		
-		for (int i = 0; i < explosions.size(); i++){
+		for (int i = explosions.size() - 1; i >= 0; i--){
 			explosions.get(i).incrementTime(elapsedTime);
 			System.out.println("Time Left for explosion: " + explosions.get(i).timeLeft);
 			
@@ -488,17 +513,26 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 			g2.fillRect((int)t.x, (int)t.y, 25, 4);
 			
 			
-			//draws the tank body
-			g2.setColor(Color.blue);
+			
+			//calculates angle for tank body
 			dy = Terrain.getY((int)t.x + 2) - Terrain.getY((int)t.x - 2) ;
 			angle = Math.atan(dy/4);
-
+			
+			//draws tank body
+			g2.setColor(Color.blue);
 			g2.setTransform (resetForm);
 			g2.rotate(angle,t.x,t.y);
 			g2.fillRect((int)t.x-Tank.LENGTH/2, (int)t.y-Tank.HEIGHT/2, Tank.LENGTH, Tank.HEIGHT);
-			//			g.fillRect((int)t.x-Tank.LENGTH/2, (int)t.y-Tank.HEIGHT/2, Tank.LENGTH, Tank.HEIGHT);
-			g.setColor(Color.red);
-			g.drawRect((int)t.x,(int)t.y,10,10);
+	
+			
+			g2.setTransform(resetForm);
+			//draws red background of hp bar
+			g2.setColor(Color.red);
+			g2.fillRect((int)t.x-Tank.HPLENGTH/2, (int)t.y-20, Tank.HPLENGTH, Tank.HPHEIGHT);	
+			
+			//draws green portion of hp bar
+			g2.setColor(Color.green);
+			g2.fillRect((int)t.x-Tank.HPLENGTH/2, (int)t.y-20, (int)(Tank.HPLENGTH*((double)t.health/(double)Tank.MAX_HEALTH)), Tank.HPHEIGHT);
 		}
 		
 		
@@ -568,6 +602,18 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 			if (key == KeyEvent.VK_SPACE){
 				fire = true;
 			}
+			
+			if (key == KeyEvent.VK_W && released){
+				changeWeaponRight = true;
+				released = false;
+			}
+
+			
+			if (key == KeyEvent.VK_S && released){
+				changeWeaponLeft = true;
+				released = false;
+			}
+
 		}
 	}
 
@@ -601,6 +647,21 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 		if (key == KeyEvent.VK_D){
 			moveRight = false;
 		}
+		
+		if (key == KeyEvent.VK_W){
+			changeWeaponRight = false;
+			released = true;
+		}
+		
+		if (key == KeyEvent.VK_S){
+			changeWeaponLeft = false;
+			released = true;
+		}
+		
+		if (key == KeyEvent.VK_SPACE){
+			fire = false;
+		}
+		
 	}
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub

@@ -10,7 +10,8 @@ public class Projectile {
 	int damage = 10;
 	int explosion = 50 ;
 	
-			
+	static final int BULLET_PROJECTILE = 0;
+	static final int SHOTGUN_PROJECTILE = 1;
 	
 	
 	public Projectile (double x, double y, int power, double angle){
@@ -58,7 +59,8 @@ public class Projectile {
 		if (x < 0 && y > Terrain.getY(0) - Terrain.REFLECT_BARRIER_HEIGHT){
 			return true;
 		}
-		if (x > Terrain.LENGTH && y > Terrain.getY(Terrain.LENGTH) - Terrain.REFLECT_BARRIER_HEIGHT){
+		if (x > Terrain.LENGTH && y > Terrain.getY(945) - Terrain.REFLECT_BARRIER_HEIGHT){
+			System.out.println("reflect on right");
 			return true;	
 		}
 		return false;
