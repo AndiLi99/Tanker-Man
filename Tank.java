@@ -14,7 +14,7 @@ public class Tank {
 	int [] weapons;
 	int playerID;
 	int currentWeapon;
-	
+	int team;
 
 	//how fast the tank can move
 	static final double SPEED = 35.0;
@@ -27,7 +27,7 @@ public class Tank {
 	public static final int MAX_POWER = 300;
 	public static final int MAX_HEALTH = 300;
 	
-	public Tank (int x, int playerID){
+	public Tank (int x, int playerID, int team){
 		fuel = MAX_FUEL;
 		aimAngle = 0;
 		power = 300;
@@ -40,10 +40,15 @@ public class Tank {
 		weapons = new int [2];
 		weapons [0] = -1;
 		weapons [1] = 5;
+		this.team = team;
 	}
 	
 	public int getCurrentWeapon(){
 		return currentWeapon;
+	}
+	
+	public void pickUpSupplyPack(SupplyPack s){
+		weapons [s.powerUpID] += s.ammo;
 	}
 	
 	public void changeWeapon(boolean right){

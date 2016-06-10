@@ -1,12 +1,12 @@
 package org.tankermanz;
 
-
 import java.awt.Color;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 
+//max
 public class DrawTank {
 
 	static final double RADS = 0.01745329251;
@@ -69,10 +69,10 @@ public class DrawTank {
 		Graphics2D g2 = (Graphics2D) g;
 		AffineTransform resetForm = g2.getTransform();
 		// Draw Tank arm
-		g2.setPaint(new GradientPaint(tankX - (int)Math.ceil(height/4.0)/2, tankY, tankArmBottom, 
-				tankX + (int)Math.ceil(height/4.0)/2, tankY, tankArmTop));
-		g2.rotate(armRadians, tankX, tankY - height/4);
-		g2.fillRect(tankX - (int)Math.ceil(height/4.0)/2, tankY - height/4 - (int)(height*1.3), (int)Math.ceil(height/4.0), (int)(height*1.3));
+		g2.setPaint(new GradientPaint(tankX, tankY, tankArmBottom, 
+				tankX, tankY - height/2, tankArmTop));
+		g2.rotate(armRadians, tankX, tankY - height/2);
+		g2.fillRect(tankX - (int)Math.ceil(height/4.0)/2, tankY - height/2, (int)(height*1.3), (int)Math.ceil(height/4.0));
 		g2.setTransform(resetForm);
 	}
 
@@ -197,4 +197,3 @@ public class DrawTank {
 
 
 }
-

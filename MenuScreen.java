@@ -13,6 +13,7 @@ import java.awt.geom.AffineTransform;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+//max
 public class MenuScreen extends JPanel implements MouseMotionListener, MouseListener {
 	// Mouse X and Y coordinates
 	static int mouseX = 0; static int mouseY = 0;

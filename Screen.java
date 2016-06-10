@@ -11,7 +11,7 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 
 
-
+//andi
 public class Screen {
 	/*	Map: 
 	 * 	#1 - Hill

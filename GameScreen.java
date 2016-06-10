@@ -32,7 +32,6 @@ public class GameScreen extends JFrame {
 		
 		animationTimer = new Timer(DELAY, animate);
 		animationTimer.start();
-		System.out.println("%%%%%%%%%%%%%%%%%%%%");
 		this.setVisible(true);
 
 		gameLoop();

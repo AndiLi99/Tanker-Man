@@ -12,6 +12,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 
+//max
 public class Control {
 
 	static int controlPanelHeight = 150;
