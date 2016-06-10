@@ -46,7 +46,7 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 	static boolean changeWeaponLeft;
 	static boolean fire;
 	
-	private boolean released;
+	private boolean released = true;
 	
 	
 	
@@ -68,7 +68,7 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 		
 		for (int i = 0; i < Terrain.numPlayers; i++){
 			//(int xLocation, int playerID)
-			Tank tank = new Tank((i+1)*100, i);
+			Tank tank = new Tank((i+1)*100, i, i%2);
 			tanks.add(tank);
 			
 		}
@@ -291,6 +291,15 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 		}
 	}
 
+	public Tank getCurrentPlayer(){
+		for (Tank aTank: tanks){
+			if (aTank.playerID == turnPlayer){
+				return aTank;
+			}
+		}
+		return null;
+	}
+	
 	public void fireProjectile (Tank t){
 		boolean weaponFired = false;
 		if (t.getCurrentWeapon() == Projectile.BULLET_PROJECTILE){
@@ -347,6 +356,7 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 		
 		tanks.get(turnPlayer).setFuel(Tank.MAX_FUEL);
 		fire = false;
+		spawnSupplyPack();
 	}
 
 	public void moveTanks (int elapsedTime){
@@ -399,25 +409,34 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 			}
 		}
 	}
-	
-	
+
+
 	public void spawnProjectile (double x, double y, int power, double aimAngle){
 		Projectile p = new Projectile (x, y, power, aimAngle);
 		projectiles.add (p);
 	}
 
 	public void moveSupplyPacks (int elapsedTime){
-		for (SupplyPack s: supplyPacks){
-			if (!s.isLanded())
-				s.moveSupplyPack(elapsedTime);
+		for (int i = supplyPacks.size() -1; i >= 0; i --){
+			if (!supplyPacks.get(i).isLanded())
+				supplyPacks.get(i).moveSupplyPack(elapsedTime);
+
+			for (Tank aTank : tanks) {
+				if (distanceBetween (aTank.x, aTank.y, supplyPacks.get(i).x, supplyPacks.get(i).y) < SupplyPack.RADIUS){
+					aTank.pickUpSupplyPack(supplyPacks.get(i));
+					supplyPacks.remove(i);
+					break;
+				}
+			}
 		}
 	}
 
 
 	public void spawnSupplyPack (){
-		Random r = new Random();
-		supplyPacks.add (new SupplyPack (100, 0, 1));
-
+		int xLocation = (int)(Math.random()*Terrain.LENGTH);
+		
+		supplyPacks.add (new SupplyPack (xLocation, 1, 10));
+		
 	}
 
 	//get Y value of terrain at a given x value
@@ -472,16 +491,6 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 		return result;		
 	}
 
-	//find all tanks within a certain radius
-	public ArrayList <Tank> getSupplyPacksHit (SupplyPack s){
-		ArrayList <Tank> result = new ArrayList <Tank>();
-
-		for (Tank aTank : tanks) {
-			if (distanceBetween (aTank.x, aTank.y, s.x, s.y) < SupplyPack.RADIUS)
-				result.add (aTank);
-		}
-		return result;		
-	}
 
 	public void paintComponent (Graphics g){
 		Graphics2D g2 = (Graphics2D) g;
@@ -520,8 +529,15 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 			angle = Math.atan(dy/4);
 			angle = angle/RADS;
 			
+			if (t.team == 0){			
 			DrawTank.colorGreen();
 			DrawTank.drawDefaultTank(g, (int)t.x, (int)t.y, 15, (int)angle, (int)t.aimAngle);
+			}
+			else if (t.team == 1){
+				DrawTank.colorRed();
+				DrawTank.drawDefaultTank(g, (int)t.x, (int)t.y, 15, (int)angle, (int)t.aimAngle);
+			}
+				
 			
 //			//draws tank body
 //			g2.setColor(Color.blue);
@@ -547,9 +563,10 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 			g.fillOval(e.x-e.radius, e.y-e.radius, e.radius*2, e.radius*2);
 		}
 
-		g.setColor(Color.gray);
+		g.setColor(Color.white);
 		for (SupplyPack s: supplyPacks){
 			g.fillRect(s.x, (int)s.y,SupplyPack.WIDTH, SupplyPack.HEIGHT);
+			System.out.println("drawing supply packs");
 		}
 		
 		g2.setTransform(resetForm);
@@ -704,12 +721,13 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 	private void drawControl(Graphics g) {
 		Control.drawBar(g);
 		Control.drawFireButton(g);
-
+		Control.drawFuelBox(g);
+		Control.drawHealthBox(g);
 	}
 
 	public void setMouseXY (int mouseX, int mouseY) {
-		this.mouseX = mouseX;
-		this.mouseY = mouseY;
+		Terrain.mouseX = mouseX;
+		Terrain.mouseY = mouseY;
 	}
 	public static int getMouseX () {
 		return mouseX;
