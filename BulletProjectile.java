@@ -8,12 +8,6 @@ public class BulletProjectile extends Projectile {
 		radius=5;
 		damage = 10;
 		explosion = 25;
-	
-		
-		
-		
-		
-		
 	}
 
 }
