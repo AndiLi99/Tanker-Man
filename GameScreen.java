@@ -1,4 +1,4 @@
-package org.tankermanz;
+package tankermanz;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

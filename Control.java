@@ -1,4 +1,4 @@
-package org.tankermanz;
+package tankermanz;
 
 import java.awt.Color;
 import java.awt.GradientPaint;
@@ -79,6 +79,7 @@ public class Control {
 				// Green if not
 				g2.setPaint(new GradientPaint(fireBoxX, fireBoxY,  new Color (3, 84, 0), 
 						fireBoxX, fireBoxY + boxHeight, new Color (4, 127, 11)));
+				clickFire = false;	
 			}
 		}
 		else {

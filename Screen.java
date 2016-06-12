@@ -1,4 +1,4 @@
-package org.tankermanz;
+package tankermanz;
 
 import java.awt.BorderLayout;
 import java.awt.Graphics;
@@ -59,11 +59,18 @@ public class Screen {
 		myWindow.setVisible(true);
 		
 		while(true){
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			if (startGame){
 				break;
 			}
 		}
 		
+		System.out.println("starting game");
 		gameScreen = new GameScreen(startMap, numPlayers);
 		
 		

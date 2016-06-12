@@ -1,4 +1,4 @@
-package org.tankermanz;
+package tankermanz;
 
 //andi
 public class SupplyPack {

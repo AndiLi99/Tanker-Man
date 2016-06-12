@@ -1,4 +1,4 @@
-package org.tankermanz;
+package tankermanz;
 
 import java.awt.Color;
 import java.awt.GradientPaint;

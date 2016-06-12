@@ -1,4 +1,4 @@
-package org.tankermanz;
+package tankermanz;
 
 public class Projectile {
 	double x;
