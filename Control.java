@@ -32,6 +32,10 @@ public class Control {
 	static final int fireBoxY = 360;	// Left corner Y coord of fire box
 	static final int fireBoxLength = 200;		// Length of fire box
 
+	static final int weaponBoxX = 290; 	// Left corner X coord of weapon box
+	static final int weaponBoxY = 360;	// Left corner Y coord of weapon box
+	static final int weaponBoxLength = 90;		// Length of fire box
+	
 	static boolean clickFire = false;
 
 	public static void drawBar (Graphics g) {
@@ -57,8 +61,17 @@ public class Control {
 		Graphics2D g2 = (Graphics2D) g;
 		g2.setPaint(new GradientPaint(0, 360,  new Color (11, 11, 11), 0, 490, new Color (35, 35, 35)));
 		g.fillRect(fuelBoxX, fuelBoxY, fuelBoxLength, boxHeight);
+		
 
-
+	}
+	
+	public static void drawWeaponBox (Graphics g){
+		Graphics2D g2 = (Graphics2D) g;
+		g2.setPaint(new GradientPaint(0, weaponBoxY, new Color (1, 5, 13), 0, weaponBoxY
+				+ boxHeight, new Color (0, 0, 161)));	
+		g.fillRect(weaponBoxX, weaponBoxY, weaponBoxLength, boxHeight);
+		
+		g.drawString(Tank.weaponNames[Terrain.getCurrentPlayer().getCurrentWeapon()] + ", " + Terrain.getCurrentPlayer().getCurrentWeaponAmmo(), weaponBoxX, weaponBoxY);
 	}
 
 	public static void drawFireButton (Graphics g) {

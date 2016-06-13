@@ -14,6 +14,8 @@ public class Tank {
 	int [] weapons;
 	int playerID;
 	int currentWeapon;
+	static String [] weaponNames = {"Bullet", "Big Bullet", "Explosive Bullet", "Spray", "Triple Shot", "Dozen Shot", "Air Strike", "Splitter", "Breaker", "Tracker", "Horizon", "Flower", "Stream", "Sniper", "Nuke", "Armageddon"};
+	static String [] weaponDescriptions = {"Bullet", "Big Bullet", "Explosive Bullet", "Spray", "Triple Shot", "Dozen Shot", "Air Strike", "Splitter", "Breaker", "Tracker", "Horizon", "Flower", "Stream", "Sniper", "Nuke", "Armageddon"};
 	int team;
 
 	//how fast the tank can move
@@ -26,6 +28,7 @@ public class Tank {
 	public static final int MAX_FUEL = 100;
 	public static final int MAX_POWER = 300;
 	public static final int MAX_HEALTH = 300;
+	public static final double HIT_RADIUS = 15;
 	
 	public Tank (int x, int playerID, int team){
 		fuel = MAX_FUEL;
@@ -34,13 +37,11 @@ public class Tank {
 		health = MAX_HEALTH;
 		this.x = x;
 		this.y = Terrain.getY(x);
-		weapons = new int[16];
+		weapons = new int [] {-1, 2,3,4,5,6,7,8,9,10,11,12,13,14,15,16};
 		this.playerID = playerID;
 		currentWeapon = 0;
-		weapons = new int [2];
-		weapons [0] = -1;
-		weapons [1] = 5;
 		this.team = team;
+		
 	}
 	
 	public int getCurrentWeapon(){
@@ -123,7 +124,7 @@ public class Tank {
 		else if (!left && canMoveRight()){
 			x += SPEED*elapsedTime/Terrain.SECONDS;
 		}
-		System.out.println("x of tank: "+ x);
+		System.out.println("fuel: "+ fuel);
 
 	}
 
@@ -137,6 +138,11 @@ public class Tank {
 
 	public void setFuel(int fuel) {
 		this.fuel = fuel;		
+	}
+
+	public int getCurrentWeaponAmmo() {
+		
+		return weapons[currentWeapon];
 	}
 
 

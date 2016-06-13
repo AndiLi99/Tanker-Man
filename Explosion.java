@@ -6,17 +6,33 @@ public class Explosion {
 	int damage;
 	int x;
 	int y;
+	boolean hasNotDamaged = true;
 	
-	public Explosion(Projectile p) {
+	public Explosion(Projectile p, boolean directHit) {
 		radius = p.explosion;
 		//in ms
-		timeLeft = 1000;
+		timeLeft = 500;
 		x = (int)p.x;
 		y = (int)p.y;
 		damage = p.damage;
 		
-		Terrain.terrainDestruction(x, radius, Terrain.CIRCLE_DESTRUCTION);
+		if (!directHit){
+			if (x > 0 && x < Terrain.LENGTH){
+				Terrain.terrainDestruction(x, radius, Terrain.CIRCLE_DESTRUCTION);
+			}
+		}
+	}
+	
+	public Explosion (Projectile p, int x, int y){
+		this.x = x;
+		this.y = y;
 		
+		radius = p.explosion;
+		damage = p.damage;
+		timeLeft = 500;
+		if (x > 0 && x < Terrain.LENGTH){
+			Terrain.terrainDestruction(x, radius, Terrain.CIRCLE_DESTRUCTION);
+		}
 	}
 
 	public void incrementTime (int elapsedTime){
@@ -29,6 +45,14 @@ public class Explosion {
 			return true;
 		else
 			return false;
+	}
+
+	public boolean hasNotDamaged() {
+		if (hasNotDamaged){
+			hasNotDamaged = false;
+			return true;
+		}
+		return false;
 	}
 	
 }

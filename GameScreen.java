@@ -44,7 +44,6 @@ public class GameScreen extends JFrame {
 //		System.out.println("before while");
 		
 		while (true) {
-			System.out.println("in while");
 			int elapsedTime = (int)(System.currentTimeMillis() - currTime);
 			currTime = System.currentTimeMillis();
 //			System.out.println("before terrain update");
@@ -61,7 +60,6 @@ public class GameScreen extends JFrame {
 	static ActionListener animate = new ActionListener(){
 	public void actionPerformed(ActionEvent arg0) {
 			terrain.repaint();
-		System.out.println("repainting");
 		}
 	};
 	

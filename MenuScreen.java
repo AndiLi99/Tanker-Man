@@ -248,7 +248,7 @@ public class MenuScreen extends JPanel implements MouseMotionListener, MouseList
 	public static boolean getInCreditsButton () { return inCreditsButton; }
 
 	// Setters
-	public void setMouseXY (int mouseX, int mouseY) { this.mouseX = mouseX; this.mouseY = mouseY; }
+	public void setMouseXY (int mouseX, int mouseY) { MenuScreen.mouseX = mouseX; MenuScreen.mouseY = mouseY; }
 	public void setOnButton (int mouseX, int mouseY) { // Determine if mouse hovers over an option
 		if (mouseY > playButtonY && mouseY < playButtonY + buttonHeight &&
 				mouseX > playButtonX && mouseX < playButtonX + playButtonLength) {
