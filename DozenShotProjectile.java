@@ -6,7 +6,7 @@ public class DozenShotProjectile extends Projectile {
 		super(x, y, power, angle);
 		radius=5;
 		damage = 10;
-		explosion = 25;
+		explosion = 15;
 		projectileID = DOZEN_SHOT_PROJECTILE;
 	}
 

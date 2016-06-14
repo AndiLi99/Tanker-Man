@@ -14,9 +14,11 @@ public class Tank {
 	int [] weapons;
 	int playerID;
 	int currentWeapon;
-	static String [] weaponNames = {"Bullet", "Big Bullet", "Explosive Bullet", "Spray", "Triple Shot", "Dozen Shot", "Air Strike", "Splitter", "Breaker", "Tracker", "Horizon", "Flower", "Stream", "Sniper", "Nuke", "Armageddon"};
-	static String [] weaponDescriptions = {"Bullet", "Big Bullet", "Explosive Bullet", "Spray", "Triple Shot", "Dozen Shot", "Air Strike", "Splitter", "Breaker", "Tracker", "Horizon", "Flower", "Stream", "Sniper", "Nuke", "Armageddon"};
+	static String [] weaponNames = {"Bullet", "Big Bullet", "Explosive Bullet", "Spray", "Triple Shot", "Dozen Shot", "Air Strike", "Splitter", "Breaker", "Tracker", "Horizon", "Flower", "Stream", "Sniper", "Nuke", "Armageddon", "Fountain"};
+	static String [] weaponDescriptions = {"Bullet", "Big Bullet", "Explosive Bullet", "Spray", "Triple Shot", "Dozen Shot", "Air Strike", "Splitter", "Breaker", "Tracker", "Horizon", "Flower", "Stream", "Sniper", "Nuke", "Armageddon", "Fountain"};
 	int team;
+	int damageDealt;
+	int totalDamageDealt;
 
 	//how fast the tank can move
 	static final double SPEED = 35.0;
@@ -37,7 +39,7 @@ public class Tank {
 		health = MAX_HEALTH;
 		this.x = x;
 		this.y = Terrain.getY(x);
-		weapons = new int [] {-1, 2,3,4,5,6,7,8,9,10,11,12,13,14,15,16};
+		weapons = new int [] {-1, 2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17};
 		this.playerID = playerID;
 		currentWeapon = 0;
 		this.team = team;
@@ -145,7 +147,18 @@ public class Tank {
 		return weapons[currentWeapon];
 	}
 
+	public void setDamageDealt(int damageDealt) {
+		this.damageDealt = damageDealt;
+	}
 
+	public int getDamageDealt (){
+		return damageDealt;
+	}
+
+	public void increaseDamageDealt(int damageDealt) {
+		this.damageDealt += damageDealt;
+		
+	}
 
 
 

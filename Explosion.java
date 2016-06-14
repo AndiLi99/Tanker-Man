@@ -8,21 +8,21 @@ public class Explosion {
 	int y;
 	boolean hasNotDamaged = true;
 	
-	public Explosion(Projectile p, boolean directHit) {
+	public Explosion(Projectile p) {
 		radius = p.explosion;
 		//in ms
 		timeLeft = 500;
 		x = (int)p.x;
 		y = (int)p.y;
 		damage = p.damage;
-		
-		if (!directHit){
+
+		if (p.projectileID != Projectile.SPRAY_PROJECTILE && p.projectileID != Projectile.SNIPER_PROJECTILE && p.projectileID != Projectile.STREAM_PROJECTILE){
 			if (x > 0 && x < Terrain.LENGTH){
 				Terrain.terrainDestruction(x, radius, Terrain.CIRCLE_DESTRUCTION);
 			}
 		}
 	}
-	
+
 	public Explosion (Projectile p, int x, int y){
 		this.x = x;
 		this.y = y;

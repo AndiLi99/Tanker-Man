@@ -6,7 +6,7 @@ public class ArmageddonProjectile extends Projectile {
 		super(x, y, power, angle);
 		radius=5;
 		damage = 55;
-		explosion = 75;
+		explosion = 125;
 		projectileID = ARMAGEDDON_PROJECTILE;
 	}
 

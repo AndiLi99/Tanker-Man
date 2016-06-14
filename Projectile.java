@@ -29,7 +29,7 @@ public class Projectile {
 	static final int SNIPER_PROJECTILE = 13;
 	static final int NUKE_PROJECTILE = 14;
 	static final int ARMAGEDDON_PROJECTILE = 15;
-	
+	static final int FOUNTAIN_PROJECTILE = 16;
 	
 
 	public Projectile (double x, double y, int power, double angle){
