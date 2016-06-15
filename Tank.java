@@ -20,6 +20,8 @@ public class Tank {
 	int damageDealt;
 	int totalDamageDealt;
 	boolean destroyed;
+	int tankTop;
+	int tankBottom;
 
 	//how fast the tank can move
 	static final double SPEED = 35.0;

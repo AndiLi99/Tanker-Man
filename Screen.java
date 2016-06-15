@@ -1,6 +1,8 @@
 package tankermanz;
 
 import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.Container;
 import java.awt.Graphics;
 import java.awt.GraphicsConfiguration;
 import java.awt.event.ActionEvent;
@@ -24,7 +26,7 @@ public class Screen {
 //	static Control control;
 	static MenuScreen menuScreen;
 	static CreditsScreen creditsScreen;
-	
+	static GameCustomizer gameCustomizer;
 	
 	static int currentScreen;
 	static int startMap = 3;
@@ -43,24 +45,16 @@ public class Screen {
 	
 	static final int FREE_FOR_ALL = 1;
 	static final int TEAM = 2;
+	protected static final int GAME_CUSTOMIZER_SCREEN = 5;
+	
+	static JPanel mainScreen;	
 	
 	public static void main (String args[]){
-		animationTimer = new Timer(DELAY, animate);
 
-		myWindow = new JFrame();
-		menuScreen = new MenuScreen();
+
+		createAndShowGUI();
+
 		
-		currentScreen = MENU_SCREEN;
-		myWindow.add(menuScreen);
-	
-		myWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		myWindow.setSize(Terrain.LENGTH,Terrain.HEIGHT);
-		myWindow.setResizable (false);
-		
-		
-		
-		animationTimer.start();
-		myWindow.setVisible(true);
 		
 		while(true){
 			try {
@@ -77,12 +71,49 @@ public class Screen {
 		System.out.println("starting game");
 		gameScreen = new GameScreen(startMap, numPlayers, gameMode);
 		
+	}
+	
+	  public void addComponentToPane(Container pane) {
+		  //create the cards
+		  menuScreen = new MenuScreen();
+		  gameCustomizer = new GameCustomizer();
+
+		  //create the panel to hold the cards
+		  mainScreen = new JPanel(new CardLayout());
+		  mainScreen.add(menuScreen, String.valueOf (MENU_SCREEN));
+		  mainScreen.add(gameCustomizer, String.valueOf (GAME_CUSTOMIZER_SCREEN));
+		  
+		  pane.add(mainScreen, BorderLayout.CENTER);
+	  }
+	
+	private static void createAndShowGUI(){
+		JFrame frame = new JFrame ("Tanker Manz");
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setSize(Terrain.LENGTH,Terrain.HEIGHT);
+		frame.setResizable (false);
+		
+		currentScreen = MENU_SCREEN;
+		
+		Screen screen = new Screen();
+		screen.addComponentToPane (frame.getContentPane());
+		
+		animationTimer = new Timer(DELAY, animate);
+		animationTimer.start();
+//		frame.pack();
+		frame.setVisible(true);
 		
 	}
+	
 	
 	public static void startGame (){
 		myWindow.dispose();
 		startGame = true;
+	}
+	
+	public static void changeScreen (int window){
+		CardLayout c1 = (CardLayout)(mainScreen.getLayout());
+		c1.show(mainScreen, String.valueOf(window));
+		
 	}
 	
 	
@@ -93,6 +124,9 @@ public class Screen {
 		else if (currentScreen == CREDIT_SCREEN)
 			creditsScreen.repaint();
 //		System.out.println("repainting");
+		else if (currentScreen == GAME_CUSTOMIZER_SCREEN)
+			gameCustomizer.repaint();
 		}
 	};
+
 }

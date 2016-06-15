@@ -21,6 +21,7 @@ import javax.swing.JPanel;
 public class Terrain extends JPanel implements KeyListener, MouseMotionListener, MouseListener{
 	static CopyOnWriteArrayList <Projectile> projectiles = new CopyOnWriteArrayList <Projectile>();
 	static ArrayList <Tank> tanks = new ArrayList <Tank>();
+	
 	static CopyOnWriteArrayList <SupplyPack> supplyPacks = new CopyOnWriteArrayList <SupplyPack>();
 	static CopyOnWriteArrayList <Explosion> explosions = new CopyOnWriteArrayList <Explosion>();
 
@@ -730,31 +731,25 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 		g2.setPaint(new GradientPaint(0, 0, new Color (1, 1, 13), 0, Control.controlPanelY, new Color (4, 8, 55)));	
 		g.fillRect(0, 0, 950, 500); // Draw dark sky background
 
-		//draw land	
+		//draws land
 		g2.setPaint(new GradientPaint(0, 0,  new Color (124, 203, 255), 0, Control.controlPanelY, new Color (11, 50, 75)));
 		g2.fillPolygon(Terrain.landX, Terrain.landY, 952);	// Draw polygon containing land
 
 		//draw projectiles
 		g.setColor(Color.white);
 		for (Projectile p: projectiles){
-			g.fillOval((int)p.x-p.radius/2, (int)p.y-p.radius/2, p.radius, p.radius);
+			DrawProjectile.drawProjectile(g2, p.projectileID, (int)p.x, (int)p.y);
 		}
 
+		//draws aimer
+		DrawPowerAndAimer.drawPowerAndAimer(g, (int) getCurrentPlayer().x, (int) getCurrentPlayer().y,
+				getCurrentPlayer().aimAngle, getCurrentPlayer().power);
 		
 		//draw tanks
 		for (Tank t: tanks){
-			
 			int dy;
 			double angle;
-//			
-//			g2.setTransform (resetForm);
-//			//draws the cannon arm
-//			g2.setColor (Color.white);
-//			g2.rotate(t.aimAngle*RADS, t.x, t.y);
-//			g2.fillRect((int)t.x, (int)t.y, 25, 4);
-//			
-//			
-//			
+
 			//calculates angle for tank body
 			dy = Terrain.getY((int)t.x + 2) - Terrain.getY((int)t.x - 2) ;
 			angle = Math.atan(dy/4);
@@ -768,15 +763,7 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 				DrawTank.colorRed();
 				DrawTank.drawDefaultTank(g, (int)t.x, (int)t.y, 15, (int)angle, (int)t.aimAngle);
 			}
-				
-			
-//			//draws tank body
-//			g2.setColor(Color.blue);
-//			g2.setTransform (resetForm);
-//			g2.rotate(angle,t.x,t.y);
-//			g2.fillRect((int)t.x-Tank.LENGTH/2, (int)t.y-Tank.HEIGHT/2, Tank.LENGTH, Tank.HEIGHT);
-//	
-//			
+					
 			g2.setTransform(resetForm);
 			//draws red background of hp bar
 			g2.setColor(Color.red);
@@ -939,6 +926,10 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 	public void mouseReleased(MouseEvent e) {
 		if (Control.getClickFire() && tankCanMove())
 			fire = true;
+		if (Control.inWeaponChangerLeft)
+			changeWeaponLeft = true;
+		else if (Control.inWeaponChangerRight)
+			changeWeaponRight = true;
 	}
 
 
@@ -952,9 +943,9 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 	private void drawControl(Graphics g) {
 		Control.drawBar(g);
 		Control.drawFireButton(g);
-		Control.drawFuelBox(g);
-		Control.drawHealthBox(g);
-		Control.drawWeaponBox(g);
+		Control.drawHealthBox(g, getCurrentPlayer().health, Tank.MAX_HEALTH, getCurrentPlayer().team);
+		Control.drawFuelBox(g, getCurrentPlayer().fuel, Tank.MAX_FUEL);
+		Control.drawWeaponBox(g, mouseX, mouseY);
 	}
 
 	public void setMouseXY (int mouseX, int mouseY) {
@@ -966,6 +957,11 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 	}
 	public static int getMouseY () {
 		return mouseY;
+	}
+	
+	public static int [] getLand (int mapNum) {
+		initialMap(mapNum);
+		return landY;
 	}
 
 	public void mouseDragged(MouseEvent arg0) {

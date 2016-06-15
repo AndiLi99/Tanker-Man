@@ -210,7 +210,7 @@ public class MenuScreen extends JPanel implements MouseMotionListener, MouseList
 
 	public void mouseClicked(MouseEvent e) {
 		if (inPlayButton){
-			Screen.startGame();
+			Screen.changeScreen(Screen.GAME_CUSTOMIZER_SCREEN);
 		}
 	}
 
