@@ -26,8 +26,7 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 
 	static int [] landX;
 	static int [] landY;
-	static int turnPlayer;
-
+	static Tank currentPlayer;
 
 	static final double GRAVITY = 100.0;
 	static final double SECONDS = 1000.0;
@@ -60,24 +59,23 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 	public static final int REFLECT_BARRIER_HEIGHT = 100;
 	
 	// constructor
-	public Terrain (int mapNum, int numPlayers) {
+	public Terrain (int mapNum, int numPlayers, int gameMode) {
 
 		landY = new int [952];
 		landX = new int [952];
 		initialMap (mapNum);
 
 		Terrain.numPlayers = numPlayers;
-		turnPlayer = 0;
 		released = true;
 		weaponFired = false;
-		
 		
 		for (int i = 0; i < Terrain.numPlayers; i++){
 			//(int xLocation, int playerID)
 			Tank tank = new Tank((i+1)*100, i, i%2);
 			tanks.add(tank);
-			
 		}
+		
+		currentPlayer = tanks.get(0);
 		
 		addKeyListener(this);
 		setFocusable(true);
@@ -300,12 +298,7 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 	}
 
 	public static Tank getCurrentPlayer(){
-		for (Tank aTank: tanks){
-			if (aTank.playerID == turnPlayer){
-				return aTank;
-			}
-		}
-		return null;
+		return currentPlayer;
 	}
 	
 	public void fireProjectile (Tank t){
@@ -479,26 +472,37 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 	}
 
 	public void nextTurn (){
-		System.out.println("Player " + (turnPlayer+1) + " dealt "+ getCurrentPlayer().getDamageDealt() + " damage");
-		if (turnPlayer + 1== numPlayers){
-			turnPlayer = 0;
-
+		System.out.println("Player " + currentPlayer.name + " dealt "+ getCurrentPlayer().getDamageDealt() + " damage");
+		int index = tanks.indexOf(currentPlayer);
+		int tanksDestroyed = 0;
+		
+		for (int i = tanks.size() -1; i >= 0; i --){
+			if (tanks.get(i).destroyed){
+				tanks.remove(i);
+				tanksDestroyed ++;
+			}
 		}
-		else
-			turnPlayer ++;
 		
-		tanks.get(turnPlayer).setDamageDealt(0);
 		
-		System.out.println("Turn Player: " + (turnPlayer+1));
+		if (index + 1 - tanksDestroyed == tanks.size()){
+			currentPlayer = tanks.get(0);
+		}
+		else {
+			currentPlayer = tanks.get(index+1 - tanksDestroyed);
+		}
+
+		currentPlayer.setDamageDealt(0);
 		
-		tanks.get(turnPlayer).setFuel(Tank.MAX_FUEL);
+		System.out.println("It is " + currentPlayer.name + "'s turn");
+		
+		currentPlayer.setFuel(Tank.MAX_FUEL);
 		fire = false;
 		spawnSupplyPack();
 	}
 	
 	public boolean isTankHit(Projectile p){
 		for (Tank t: tanks){
-			if (distanceBetween(t.x, t.y, p.x, p.y) < Tank.HIT_RADIUS && t.playerID != turnPlayer){
+			if (distanceBetween(t.x, t.y, p.x, p.y) < Tank.HIT_RADIUS && t.playerID != currentPlayer.playerID){
 				return true;
 			}
 		}
@@ -680,7 +684,7 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 				for (Tank aTank : tanks) {
 					aTank.dropTank();
 					if (distanceBetween (aTank.x, aTank.y, e.x, e.y) < e.radius+Tank.HIT_RADIUS){
-						aTank.health -= e.damage;
+						aTank.dealDamage (e.damage);
 						System.out.println("Tank hit!");
 						
 						

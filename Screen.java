@@ -39,6 +39,10 @@ public class Screen {
 	static Timer animationTimer;
 	static int numPlayers = 3;
 	static boolean startGame;
+	private static int gameMode;
+	
+	static final int FREE_FOR_ALL = 1;
+	static final int TEAM = 2;
 	
 	public static void main (String args[]){
 		animationTimer = new Timer(DELAY, animate);
@@ -71,7 +75,7 @@ public class Screen {
 		}
 		
 		System.out.println("starting game");
-		gameScreen = new GameScreen(startMap, numPlayers);
+		gameScreen = new GameScreen(startMap, numPlayers, gameMode);
 		
 		
 	}

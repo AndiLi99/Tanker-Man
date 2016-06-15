@@ -21,13 +21,13 @@ public class GameScreen extends JFrame {
 	static final int DELAY = 5;
 	static Timer animationTimer;
 	
-	public GameScreen (int startMap, int numPlayers){
+	public GameScreen (int startMap, int numPlayers, int gameMode){
 						
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setSize(Terrain.LENGTH,Terrain.HEIGHT);
 		this.setResizable (false);
 		
-		terrain = new Terrain(startMap,numPlayers);
+		terrain = new Terrain(startMap,numPlayers, gameMode);
 		this.add(terrain);
 		
 		animationTimer = new Timer(DELAY, animate);

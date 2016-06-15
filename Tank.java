@@ -19,6 +19,7 @@ public class Tank {
 	int team;
 	int damageDealt;
 	int totalDamageDealt;
+	boolean destroyed;
 
 	//how fast the tank can move
 	static final double SPEED = 35.0;
@@ -72,7 +73,7 @@ public class Tank {
 	
 
 	public boolean canMove(){
-	if (Terrain.projectiles.size() == 0 && Terrain.explosions.size() == 0 && this.playerID == Terrain.turnPlayer){
+	if (Terrain.projectiles.size() == 0 && Terrain.explosions.size() == 0 && this.playerID == Terrain.currentPlayer.playerID){
 		return true;
 	}
 	else
@@ -157,7 +158,16 @@ public class Tank {
 
 	public void increaseDamageDealt(int damageDealt) {
 		this.damageDealt += damageDealt;
-		
+		totalDamageDealt+=damageDealt;
+	}
+
+	public void dealDamage(int damage) {
+		if (health - damage <= 0){
+			health = 0;
+			destroyed = true;
+		}
+		else
+			health -= damage;
 	}
 
 
