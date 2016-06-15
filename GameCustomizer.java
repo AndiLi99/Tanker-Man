@@ -214,6 +214,8 @@ public class GameCustomizer extends JPanel implements MouseMotionListener, Mouse
 		}
 	}
 
+	
+	
 	public void mapNameLabel () {
 		if (mapNum == Constants.HILL) 
 			mapName.setText("Hill");
@@ -594,5 +596,7 @@ public class GameCustomizer extends JPanel implements MouseMotionListener, Mouse
 			decreaseNumPlayers = false;
 		}
 	}
+	
+	
 }
 
