@@ -75,21 +75,21 @@ public class DrawTank {
 	public static void drawCustomTank (Graphics g, int tankX, int tankY, int height, int angle, int armAngle, int body, int tracks) {
 		tankArm(g, tankX, tankY, height, armAngle);
 		
-		if (body == CONSTANTS.TANK_TOP_DEFAULT)
+		if (body == Constants.TANK_TOP_DEFAULT)
 			tankTopDefault(g, tankX, tankY, height, angle);
-		else if (body == CONSTANTS.TANK_TOP_MOUNTAIN)
+		else if (body == Constants.TANK_TOP_MOUNTAIN)
 			tankTopMountains(g, tankX, tankY, height, angle);
-		else if (body == CONSTANTS.TANK_TOP_CIRCLE)
+		else if (body == Constants.TANK_TOP_CIRCLE)
 			tankTopCircle(g, tankX, tankY, height, angle);
 		
-		if (tracks == CONSTANTS.TANK_TRACK_DEFAULT)
+		if (tracks == Constants.TANK_TRACK_DEFAULT)
 			tankTracksDefault(g, tankX, tankY, height, angle);
-		else if (tracks == CONSTANTS.TANK_TRACK_MODERN)
+		else if (tracks == Constants.TANK_TRACK_MODERN)
 			tankTracksModern(g, tankX, tankY, height, angle);
 	}
 
 	public static void tankArm (Graphics g, int tankX, int tankY, int height, int armAngle) {
-		double armRadians = armAngle*CONSTANTS.RADS;
+		double armRadians = armAngle*Constants.RADS;
 
 		Graphics2D g2 = (Graphics2D) g;
 		AffineTransform resetForm = g2.getTransform();
@@ -102,7 +102,7 @@ public class DrawTank {
 	}
 
 	public static void tankTopDefault (Graphics g, int tankX, int tankY, int height, int angle) {
-		double radians = angle*CONSTANTS.RADS;
+		double radians = angle*Constants.RADS;
 		Graphics2D g2 = (Graphics2D) g;
 		AffineTransform resetForm = g2.getTransform();
 
@@ -124,7 +124,7 @@ public class DrawTank {
 	}
 
 	public static void tankTopMountains (Graphics g, int tankX, int tankY, int height, int angle) {
-		double radians = angle*CONSTANTS.RADS;
+		double radians = angle*Constants.RADS;
 		Graphics2D g2 = (Graphics2D) g;
 		AffineTransform resetForm = g2.getTransform();
 
@@ -144,7 +144,7 @@ public class DrawTank {
 		g2.setTransform(resetForm);
 	}
 	public static void tankTopCircle (Graphics g, int tankX, int tankY, int height, int angle) {
-		double radians = angle*CONSTANTS.RADS;
+		double radians = angle*Constants.RADS;
 		Graphics2D g2 = (Graphics2D) g;
 		AffineTransform resetForm = g2.getTransform();
 
@@ -168,7 +168,7 @@ public class DrawTank {
 		g2.setTransform(resetForm);
 	}
 	public static void tankTracksDefault (Graphics g, int tankX, int tankY, int height, int angle) {
-		double radians = angle*CONSTANTS.RADS;
+		double radians = angle*Constants.RADS;
 		Graphics2D g2 = (Graphics2D) g;
 		AffineTransform resetForm = g2.getTransform();
 		g2.rotate(radians, tankX, tankY);
@@ -200,7 +200,7 @@ public class DrawTank {
 	}
 
 	public static void tankTracksModern (Graphics g, int tankX, int tankY, int height, int angle) {
-		double radians = angle*CONSTANTS.RADS;
+		double radians = angle*Constants.RADS;
 		Graphics2D g2 = (Graphics2D) g;
 		AffineTransform resetForm = g2.getTransform();
 		g2.rotate(radians, tankX, tankY);

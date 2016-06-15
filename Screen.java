@@ -51,7 +51,6 @@ public class Screen {
 	
 	public static void main (String args[]){
 
-
 		createAndShowGUI();
 
 		
@@ -113,7 +112,7 @@ public class Screen {
 	public static void changeScreen (int window){
 		CardLayout c1 = (CardLayout)(mainScreen.getLayout());
 		c1.show(mainScreen, String.valueOf(window));
-		
+		currentScreen = window;
 	}
 	
 	

@@ -2,8 +2,8 @@ package tankermanz;
 
 public class TripleShotProjectile extends Projectile {
 
-	public TripleShotProjectile(double x, double y, int power, double angle) {
-		super(x, y, power, angle);
+	public TripleShotProjectile(Terrain terrain, double x, double y, int power, double angle) {
+		super(terrain, x, y, power, angle);
 		radius=5;
 		damage = 10;
 		explosion = 25;

@@ -22,7 +22,8 @@ public class Tank {
 	boolean destroyed;
 	int tankTop;
 	int tankBottom;
-
+	Terrain terrain;
+	
 	//how fast the tank can move
 	static final double SPEED = 35.0;
 	static final double CANNONSPEED = 50.0;
@@ -35,17 +36,18 @@ public class Tank {
 	public static final int MAX_HEALTH = 300;
 	public static final double HIT_RADIUS = 15;
 	
-	public Tank (int x, int playerID, int team){
+	public Tank (Terrain terrain, int x, int playerID, int team){
 		fuel = MAX_FUEL;
 		aimAngle = 0;
 		power = 300;
 		health = MAX_HEALTH;
 		this.x = x;
-		this.y = Terrain.getY(x);
+		this.y = terrain.getY(x);
 		weapons = new int [] {-1, 2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17};
 		this.playerID = playerID;
 		currentWeapon = 0;
 		this.team = team;
+		this.terrain = terrain;
 		
 	}
 	
@@ -101,7 +103,7 @@ public class Tank {
 	}
 
 	public void dropTank (){
-		y = Terrain.getY((int)x);
+		y = terrain.getY((int)x);
 	}
 	
 	private boolean canMoveLeft(){

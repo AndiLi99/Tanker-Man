@@ -2,8 +2,8 @@ package tankermanz;
 
 public class StreamProjectile extends Projectile {
 
-	public StreamProjectile(double x, double y, int power, double angle, int delay) {
-		super(x, y, power, angle);
+	public StreamProjectile(Terrain terrain, double x, double y, int power, double angle, int delay) {
+		super(terrain, x, y, power, angle);
 		radius=3;
 		damage = 5;
 		explosion = 3;

@@ -27,7 +27,7 @@ public class GameCustomizer extends JPanel implements MouseMotionListener, Mouse
 
 	// These are variables that will be used to start the game
 	int mapNum = 1;
-	int gameType = 0;
+	int gameType = Constants.FFA;
 	static int maxHP = 300;
 	static int maxFuel = 100;
 	static int numPlayers = 2;
@@ -215,15 +215,15 @@ public class GameCustomizer extends JPanel implements MouseMotionListener, Mouse
 	}
 
 	public void mapNameLabel () {
-		if (mapNum == CONSTANTS.HILL) 
+		if (mapNum == Constants.HILL) 
 			mapName.setText("Hill");
-		else if (mapNum == CONSTANTS.EXPONENTIAL) 
+		else if (mapNum == Constants.EXPONENTIAL) 
 			mapName.setText("Exponential");
-		else if (mapNum == CONSTANTS.CURVED_PLAIN) 
+		else if (mapNum == Constants.CURVED_PLAIN) 
 			mapName.setText("Curved Flat Plain");
-		else if (mapNum == CONSTANTS.DBL_STAIR_STEP) 
+		else if (mapNum == Constants.DBL_STAIR_STEP) 
 			mapName.setText("Double Stair Steps");
-		else if (mapNum == CONSTANTS.EMPIRE)
+		else if (mapNum == Constants.EMPIRE)
 			mapName.setText("Empire");
 	}
 
@@ -294,7 +294,7 @@ public class GameCustomizer extends JPanel implements MouseMotionListener, Mouse
 		for (int a = 0; a < 4; a++) {
 			int boxHeight = (playerBoxHeight - playerNumberHeight)/4;
 			int Y = playerBoxY + playerNumberHeight + a*boxHeight;
-			if (a > numPlayers - 1 || gameType != CONSTANTS.TEAM) {
+			if (a > numPlayers - 1 || gameType != Constants.TEAM) {
 				g2.setPaint(new GradientPaint(0, Y, new Color (25, 25, 25), 0,
 						Y + boxHeight, new Color (40, 40, 40)));
 			}
@@ -335,7 +335,12 @@ public class GameCustomizer extends JPanel implements MouseMotionListener, Mouse
 		g2.setPaint(new GradientPaint(0, mapDisplayY, new Color (1, 1, 13), 0, mapDisplayY + mapHeight, new Color (4, 8, 55)));
 		g.fillRect(mapDisplayX, mapDisplayY, mapDisplayLength, mapHeight);
 
-		int [] landY = Terrain.getLand(mapNum);
+		Terrain terrain = new Terrain(mapNum);
+		int [] tempLandY = terrain.getLand(mapNum);
+		int [] landY = new int [952];
+		
+		for (int i = 0; i < landY.length; i ++) landY [i] = tempLandY [i];
+		
 		landY = resizeLandY(landY, mapHeight);
 
 		int [] landX = new int [952];
@@ -354,7 +359,7 @@ public class GameCustomizer extends JPanel implements MouseMotionListener, Mouse
 		int [] triangleX1 = {numPlayersTitleX - height - distance, numPlayersTitleX - distance, numPlayersTitleX - distance };
 		int [] triangleY = {numPlayersTitleY + playerTitleHeight/2, numPlayersTitleY + playerTitleHeight/2 + height/2, numPlayersTitleY + playerTitleHeight/2 - height/2};
 
-		if (numPlayers == CONSTANTS.MIN_PLAYERS)
+		if (numPlayers == Constants.MIN_PLAYERS)
 			g.setColor(new Color (64,64,64));
 		else 
 			g.setColor(Color.white);
@@ -363,7 +368,7 @@ public class GameCustomizer extends JPanel implements MouseMotionListener, Mouse
 		
 		int [] triangleX2 = {numPlayersTitleX + numPlayersTitleLength + distance + height, numPlayersTitleX + numPlayersTitleLength + distance, 
 				numPlayersTitleX + numPlayersTitleLength + distance};
-		if (numPlayers == CONSTANTS.MAX_PLAYERS)
+		if (numPlayers == Constants.MAX_PLAYERS)
 			g.setColor(new Color (64,64,64));
 		else 
 			g.setColor(Color.white);
@@ -433,8 +438,8 @@ public class GameCustomizer extends JPanel implements MouseMotionListener, Mouse
 		if (inStartGame) 
 			Screen.startGame();
 		
-		if (increaseNumPlayers && numPlayers < CONSTANTS.MAX_PLAYERS) numPlayers ++;
-		else if (decreaseNumPlayers && numPlayers > CONSTANTS.MIN_PLAYERS) numPlayers --;
+		if (increaseNumPlayers && numPlayers < Constants.MAX_PLAYERS) numPlayers ++;
+		else if (decreaseNumPlayers && numPlayers > Constants.MIN_PLAYERS) numPlayers --;
 		numPlayersTitle.setText(Integer.toString(numPlayers));
 
 		// Update text selected

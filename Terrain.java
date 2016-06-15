@@ -25,8 +25,8 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 	static CopyOnWriteArrayList <SupplyPack> supplyPacks = new CopyOnWriteArrayList <SupplyPack>();
 	static CopyOnWriteArrayList <Explosion> explosions = new CopyOnWriteArrayList <Explosion>();
 
-	static int [] landX;
-	static int [] landY;
+	int [] landX;
+	int [] landY;
 	static Tank currentPlayer;
 
 	static final double GRAVITY = 100.0;
@@ -62,8 +62,7 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 	// constructor
 	public Terrain (int mapNum, int numPlayers, int gameMode) {
 
-		landY = new int [952];
-		landX = new int [952];
+		
 		initialMap (mapNum);
 
 		Terrain.numPlayers = numPlayers;
@@ -72,7 +71,8 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 		
 		for (int i = 0; i < Terrain.numPlayers; i++){
 			//(int xLocation, int playerID)
-			Tank tank = new Tank((i+1)*100, i, i%2);
+			Tank tank = new Tank(this, (i+1)*100, i, i%2);
+			tank.dropTank();
 			tanks.add(tank);
 		}
 		
@@ -86,8 +86,16 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 	
 
 
+	public Terrain(int startMap) {
+		initialMap(startMap);
+	}
+
+
+
 	//max
-	public static void initialMap (int mapNum) {
+	public void initialMap (int mapNum) {
+		landY = new int [952];
+		landX = new int [952];
 		/*	Map Types: 
 		 * 	#1 - Hill
 		 *  #2 - Exponential
@@ -249,7 +257,7 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 
 	
 	//max
-	public static void terrainDestruction (int locationX, int power, int type) {
+	public void terrainDestruction (int locationX, int power, int type) {
 		int yMid = landY[locationX];	// Middle of attack
 
 		if (type == 0) { // Circular destruction
@@ -312,104 +320,104 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 			System.out.println(Tank.weaponNames[t.getCurrentWeapon()] + "fired");
 			
 			if (t.getCurrentWeapon() == Projectile.BULLET_PROJECTILE){
-				projectiles.add (new BulletProjectile (t.x, t.y, t.power, t.aimAngle));
+				projectiles.add (new BulletProjectile (this, t.x, t.y, t.power, t.aimAngle));
 				t.weapons[t.getCurrentWeapon()] ++;
 			}
 			
 			else if (t.getCurrentWeapon() == Projectile.BIG_BULLET_PROJECTILE){
-				projectiles.add (new BigBulletProjectile (t.x, t.y, t.power, t.aimAngle));
+				projectiles.add (new BigBulletProjectile (this, t.x, t.y, t.power, t.aimAngle));
 			}
 			
 			else if (t.getCurrentWeapon() == Projectile.EXPLOSIVE_BULLET_PROJECTILE){
-				projectiles.add (new ExplosiveBulletProjectile (t.x, t.y, t.power, t.aimAngle));
+				projectiles.add (new ExplosiveBulletProjectile (this, t.x, t.y, t.power, t.aimAngle));
 			}
 			
 			else if (t.getCurrentWeapon() == Projectile.SPRAY_PROJECTILE){
-				projectiles.add (new SprayProjectile (t.x, t.y, t.power-5, t.aimAngle+1));
-				projectiles.add (new SprayProjectile (t.x, t.y, t.power-5, t.aimAngle));
-				projectiles.add (new SprayProjectile (t.x, t.y, t.power-15, t.aimAngle-3));
-				projectiles.add (new SprayProjectile (t.x, t.y, t.power+15, t.aimAngle+3));
-				projectiles.add (new SprayProjectile (t.x, t.y, t.power+15, t.aimAngle-4));
-				projectiles.add (new SprayProjectile (t.x, t.y, t.power+15, t.aimAngle+4));
-				projectiles.add (new SprayProjectile (t.x, t.y, t.power-5, t.aimAngle+4));
-				projectiles.add (new SprayProjectile (t.x, t.y, t.power+5, t.aimAngle-4));
-				projectiles.add (new SprayProjectile (t.x, t.y, t.power+5, t.aimAngle+3));
-				projectiles.add (new SprayProjectile (t.x, t.y, t.power+5, t.aimAngle-3));
+				projectiles.add (new SprayProjectile (this, t.x, t.y, t.power-5, t.aimAngle+1));
+				projectiles.add (new SprayProjectile (this, t.x, t.y, t.power-5, t.aimAngle));
+				projectiles.add (new SprayProjectile (this, t.x, t.y, t.power-15, t.aimAngle-3));
+				projectiles.add (new SprayProjectile (this, t.x, t.y, t.power+15, t.aimAngle+3));
+				projectiles.add (new SprayProjectile (this, t.x, t.y, t.power+15, t.aimAngle-4));
+				projectiles.add (new SprayProjectile (this, t.x, t.y, t.power+15, t.aimAngle+4));
+				projectiles.add (new SprayProjectile (this, t.x, t.y, t.power-5, t.aimAngle+4));
+				projectiles.add (new SprayProjectile (this, t.x, t.y, t.power+5, t.aimAngle-4));
+				projectiles.add (new SprayProjectile (this, t.x, t.y, t.power+5, t.aimAngle+3));
+				projectiles.add (new SprayProjectile (this, t.x, t.y, t.power+5, t.aimAngle-3));
 			}
 			
 			else if (t.getCurrentWeapon() == Projectile.TRIPLE_SHOT_PROJECTILE){
-				projectiles.add (new TripleShotProjectile (t.x, t.y, t.power, t.aimAngle));
-				projectiles.add (new TripleShotProjectile (t.x, t.y, t.power, t.aimAngle - 5));
-				projectiles.add (new TripleShotProjectile (t.x, t.y, t.power, t.aimAngle + 5));
+				projectiles.add (new TripleShotProjectile (this, t.x, t.y, t.power, t.aimAngle));
+				projectiles.add (new TripleShotProjectile (this, t.x, t.y, t.power, t.aimAngle - 5));
+				projectiles.add (new TripleShotProjectile (this, t.x, t.y, t.power, t.aimAngle + 5));
 			}
 			
 			else if (t.getCurrentWeapon() == Projectile.DOZEN_SHOT_PROJECTILE){
-				projectiles.add (new DozenShotProjectile (t.x, t.y, t.power, t.aimAngle));
-				projectiles.add (new DozenShotProjectile (t.x, t.y, t.power, t.aimAngle-1));
-				projectiles.add (new DozenShotProjectile (t.x, t.y, t.power, t.aimAngle-2));
-				projectiles.add (new DozenShotProjectile (t.x, t.y, t.power, t.aimAngle-3));
-				projectiles.add (new DozenShotProjectile (t.x, t.y, t.power, t.aimAngle-4));
-				projectiles.add (new DozenShotProjectile (t.x, t.y, t.power, t.aimAngle-5));
-				projectiles.add (new DozenShotProjectile (t.x, t.y, t.power, t.aimAngle+1));
-				projectiles.add (new DozenShotProjectile (t.x, t.y, t.power, t.aimAngle+2));
-				projectiles.add (new DozenShotProjectile (t.x, t.y, t.power, t.aimAngle+3));
-				projectiles.add (new DozenShotProjectile (t.x, t.y, t.power, t.aimAngle+4));
-				projectiles.add (new DozenShotProjectile (t.x, t.y, t.power, t.aimAngle+5));
-				projectiles.add (new DozenShotProjectile (t.x, t.y, t.power, t.aimAngle+6));
+				projectiles.add (new DozenShotProjectile (this, t.x, t.y, t.power, t.aimAngle));
+				projectiles.add (new DozenShotProjectile (this, t.x, t.y, t.power, t.aimAngle-1));
+				projectiles.add (new DozenShotProjectile (this, t.x, t.y, t.power, t.aimAngle-2));
+				projectiles.add (new DozenShotProjectile (this, t.x, t.y, t.power, t.aimAngle-3));
+				projectiles.add (new DozenShotProjectile (this, t.x, t.y, t.power, t.aimAngle-4));
+				projectiles.add (new DozenShotProjectile (this, t.x, t.y, t.power, t.aimAngle-5));
+				projectiles.add (new DozenShotProjectile (this, t.x, t.y, t.power, t.aimAngle+1));
+				projectiles.add (new DozenShotProjectile (this, t.x, t.y, t.power, t.aimAngle+2));
+				projectiles.add (new DozenShotProjectile (this, t.x, t.y, t.power, t.aimAngle+3));
+				projectiles.add (new DozenShotProjectile (this, t.x, t.y, t.power, t.aimAngle+4));
+				projectiles.add (new DozenShotProjectile (this, t.x, t.y, t.power, t.aimAngle+5));
+				projectiles.add (new DozenShotProjectile (this, t.x, t.y, t.power, t.aimAngle+6));
 			}
 			
 			else if (t.getCurrentWeapon() == Projectile.AIR_STRIKE_PROJECTILE){
-				projectiles.add (new AirStrikeSummonProjectile (t.x, t.y, t.power, t.aimAngle));
+				projectiles.add (new AirStrikeSummonProjectile (this, t.x, t.y, t.power, t.aimAngle));
 			}
 		
 			else if (t.getCurrentWeapon() == Projectile.SPLITTER_PROJECTILE){
-				projectiles.add (new SplitterProjectile (t.x, t.y, t.power, t.aimAngle, false));
+				projectiles.add (new SplitterProjectile (this, t.x, t.y, t.power, t.aimAngle, false));
 			}
 			
 			else if (t.getCurrentWeapon() == Projectile.BREAKER_PROJECTILE){
-				projectiles.add (new BreakerProjectile (t.x, t.y, t.power, t.aimAngle, false));
+				projectiles.add (new BreakerProjectile (this, t.x, t.y, t.power, t.aimAngle, false));
 			}
 		
 			else if (t.getCurrentWeapon() == Projectile.TRACKER_PROJECTILE){
-				projectiles.add (new TrackerProjectile (t.x, t.y, t.power, t.aimAngle));
+				projectiles.add (new TrackerProjectile (this, t.x, t.y, t.power, t.aimAngle));
 			}
 			
 			else if (t.getCurrentWeapon() == Projectile.HORIZON_PROJECTILE){
-				projectiles.add (new HorizonProjectile (t.x, t.y, t.power, t.aimAngle));
+				projectiles.add (new HorizonProjectile (this, t.x, t.y, t.power, t.aimAngle));
 			}
 			
 			else if (t.getCurrentWeapon() == Projectile.FLOWER_PROJECTILE){
-				projectiles.add (new FlowerProjectile (t.x, t.y, t.power, t.aimAngle));
+				projectiles.add (new FlowerProjectile (this, t.x, t.y, t.power, t.aimAngle));
 			}
 			
 			else if (t.getCurrentWeapon() == Projectile.STREAM_PROJECTILE){
-				projectiles.add (new StreamProjectile (t.x, t.y, t.power, t.aimAngle, 0));
-				projectiles.add (new StreamProjectile (t.x, t.y, t.power, t.aimAngle, 100));
-				projectiles.add (new StreamProjectile (t.x, t.y, t.power, t.aimAngle, 200));
-				projectiles.add (new StreamProjectile (t.x, t.y, t.power, t.aimAngle, 300));
-				projectiles.add (new StreamProjectile (t.x, t.y, t.power, t.aimAngle, 400));
-				projectiles.add (new StreamProjectile (t.x, t.y, t.power, t.aimAngle, 500));
-				projectiles.add (new StreamProjectile (t.x, t.y, t.power, t.aimAngle, 600));
-				projectiles.add (new StreamProjectile (t.x, t.y, t.power, t.aimAngle, 700));
-				projectiles.add (new StreamProjectile (t.x, t.y, t.power, t.aimAngle, 800));
-				projectiles.add (new StreamProjectile (t.x, t.y, t.power, t.aimAngle, 900));
-				projectiles.add (new StreamProjectile (t.x, t.y, t.power, t.aimAngle, 1000));
+				projectiles.add (new StreamProjectile (this, t.x, t.y, t.power, t.aimAngle, 0));
+				projectiles.add (new StreamProjectile (this, t.x, t.y, t.power, t.aimAngle, 100));
+				projectiles.add (new StreamProjectile (this, t.x, t.y, t.power, t.aimAngle, 200));
+				projectiles.add (new StreamProjectile (this, t.x, t.y, t.power, t.aimAngle, 300));
+				projectiles.add (new StreamProjectile (this, t.x, t.y, t.power, t.aimAngle, 400));
+				projectiles.add (new StreamProjectile (this, t.x, t.y, t.power, t.aimAngle, 500));
+				projectiles.add (new StreamProjectile (this, t.x, t.y, t.power, t.aimAngle, 600));
+				projectiles.add (new StreamProjectile (this, t.x, t.y, t.power, t.aimAngle, 700));
+				projectiles.add (new StreamProjectile (this, t.x, t.y, t.power, t.aimAngle, 800));
+				projectiles.add (new StreamProjectile (this, t.x, t.y, t.power, t.aimAngle, 900));
+				projectiles.add (new StreamProjectile (this, t.x, t.y, t.power, t.aimAngle, 1000));
 			}
 			
 			else if (t.getCurrentWeapon() == Projectile.SNIPER_PROJECTILE){
-				projectiles.add (new SniperProjectile (t.x, t.y, t.power, t.aimAngle));
+				projectiles.add (new SniperProjectile (this, t.x, t.y, t.power, t.aimAngle));
 			}
 			
 			else if (t.getCurrentWeapon() == Projectile.NUKE_PROJECTILE){
-				projectiles.add (new NukeProjectile (t.x, t.y, t.power, t.aimAngle));
+				projectiles.add (new NukeProjectile (this, t.x, t.y, t.power, t.aimAngle));
 			}
 			
 			else if (t.getCurrentWeapon() == Projectile.ARMAGEDDON_PROJECTILE){
-				projectiles.add (new ArmageddonProjectile (t.x, t.y, t.power, t.aimAngle));
+				projectiles.add (new ArmageddonProjectile (this, t.x, t.y, t.power, t.aimAngle));
 			}
 			
 			else if (t.getCurrentWeapon() == Projectile.FOUNTAIN_PROJECTILE){
-				projectiles.add (new FountainProjectile(t.x, t.y, t.power, t.aimAngle, false));
+				projectiles.add (new FountainProjectile(this, t.x, t.y, t.power, t.aimAngle, false));
 			}
 			
 		}
@@ -432,24 +440,21 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 
 			if (p.deleteOnSide()){
 				projectiles.remove(p);
-				System.out.println("Delete projectile");
 			}
 
 			else if (p.reflectOnSide()){
 				p.velocityX = -1*p.velocityX;
-				System.out.println("reflecting");
 			}
 
 			else if (p.isHit() || isTankHit(p)){
 				explodeProjectile(p, isTankHit(p));
-				System.out.println("explode");
 			}
 			
 			if (p.projectileID == Projectile.SPLITTER_PROJECTILE){
 				SplitterProjectile s = (SplitterProjectile) p;
 				if (s.y + 100 > getY ((int)s.x) && s.velocityY > 0 && s.split == false){
-					projectiles.add(new SplitterProjectile(s.x, s.y, 65, true));
-					projectiles.add(new SplitterProjectile(s.x, s.y, -65, true));
+					projectiles.add(new SplitterProjectile(this, s.x, s.y, 65, true));
+					projectiles.add(new SplitterProjectile(this, s.x, s.y, -65, true));
 					System.out.println("splitting");
 					projectiles.remove(p);
 				}
@@ -581,12 +586,12 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 	public void spawnSupplyPack (){
 		int xLocation = (int)(Math.random()*Terrain.LENGTH);
 		
-		supplyPacks.add (new SupplyPack (xLocation, 1, 10));
+		supplyPacks.add (new SupplyPack (this, xLocation, 1, 10));
 		
 	}
 
 	//get Y value of terrain at a given x value
-	static public int getY (int x){
+	public int getY (int x){
 		for (int i = 0; i < landX.length; i++) {
 			if (landX [i] == x) return landY [i];
 		}
@@ -609,7 +614,7 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 				p.projectileID == Projectile.NUKE_PROJECTILE ||
 				p.projectileID == Projectile.ARMAGEDDON_PROJECTILE
 				){
-			Explosion e = new Explosion (p);
+			Explosion e = new Explosion (this, p);
 			explosions.add (e);
 		}
 		
@@ -617,55 +622,55 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 			BreakerProjectile b = (BreakerProjectile)p;
 
 			if (!b.split){
-				projectiles.add(new BreakerProjectile(p.x, p.y, 55, true));
-				projectiles.add(new BreakerProjectile(p.x, p.y, -55, true));
+				projectiles.add(new BreakerProjectile(this, p.x, p.y, 55, true));
+				projectiles.add(new BreakerProjectile(this, p.x, p.y, -55, true));
 			}
 			else if (b.split){
-				Explosion e = new Explosion (p);
+				Explosion e = new Explosion (this, p);
 				explosions.add (e);
 			}
 		}
 		else if (p.projectileID == Projectile.AIR_STRIKE_PROJECTILE){
-			projectiles.add(new AirStrikeProjectile(p.x, 10, 0, 0, 0));
-			projectiles.add(new AirStrikeProjectile(p.x - 20, 10, 0, 0, 100));
-			projectiles.add(new AirStrikeProjectile(p.x + 20, 10, 0,0, 200));
+			projectiles.add(new AirStrikeProjectile(this, p.x, 10, 0, 0, 0));
+			projectiles.add(new AirStrikeProjectile(this, p.x - 20, 10, 0, 0, 100));
+			projectiles.add(new AirStrikeProjectile(this, p.x + 20, 10, 0,0, 200));
 		}
 		
 		else if (p.projectileID == Projectile.HORIZON_PROJECTILE){
-			explosions.add (new Explosion (p, (int)p.x, (int)p.y));
-			explosions.add (new Explosion (p, (int)p.x+15, (int)p.y));
-			explosions.add (new Explosion (p, (int)p.x-15, (int)p.y));
-			explosions.add (new Explosion (p, (int)p.x+30, (int)p.y));
-			explosions.add (new Explosion (p, (int)p.x-30, (int)p.y));
+			explosions.add (new Explosion (this, p, (int)p.x, (int)p.y));
+			explosions.add (new Explosion (this, p, (int)p.x+15, (int)p.y));
+			explosions.add (new Explosion (this, p, (int)p.x-15, (int)p.y));
+			explosions.add (new Explosion (this, p, (int)p.x+30, (int)p.y));
+			explosions.add (new Explosion (this, p, (int)p.x-30, (int)p.y));
 		}
 		
 		else if (p.projectileID == Projectile.FLOWER_PROJECTILE){
-			explosions.add (new Explosion(p, (int)p.x + 30, (int)p.y));
-			explosions.add (new Explosion(p, (int)p.x - 30, (int)p.y));
-			explosions.add (new Explosion(p, (int)p.x, (int)p.y - 30));
-			explosions.add (new Explosion(p, (int)p.x, (int)p.y + 30));
-			explosions.add (new Explosion(p, (int)p.x + 21, (int)p.y - 21));
-			explosions.add (new Explosion(p, (int)p.x +21, (int)p.y + 21));
-			explosions.add (new Explosion(p, (int)p.x -21, (int)p.y - 21));
-			explosions.add (new Explosion(p, (int)p.x -21, (int)p.y + 21));
+			explosions.add (new Explosion(this, p, (int)p.x + 30, (int)p.y));
+			explosions.add (new Explosion(this, p, (int)p.x - 30, (int)p.y));
+			explosions.add (new Explosion(this, p, (int)p.x, (int)p.y - 30));
+			explosions.add (new Explosion(this, p, (int)p.x, (int)p.y + 30));
+			explosions.add (new Explosion(this, p, (int)p.x + 21, (int)p.y - 21));
+			explosions.add (new Explosion(this, p, (int)p.x +21, (int)p.y + 21));
+			explosions.add (new Explosion(this, p, (int)p.x -21, (int)p.y - 21));
+			explosions.add (new Explosion(this, p, (int)p.x -21, (int)p.y + 21));
 		}
 		
 		else if (p.projectileID == Projectile.FOUNTAIN_PROJECTILE){
 			FountainProjectile f = (FountainProjectile)p;
 			if (f.activated){
-				explosions.add (new Explosion (p));
+				explosions.add (new Explosion (this, p));
 			}
 			else {
-				projectiles.add (new FountainProjectile(p.x, p.y, 150, 270, true));
-				projectiles.add (new FountainProjectile(p.x, p.y, 150, 271, true));
-				projectiles.add (new FountainProjectile(p.x, p.y, 150, 272, true));
-				projectiles.add (new FountainProjectile(p.x, p.y, 150, 273, true));
-				projectiles.add (new FountainProjectile(p.x, p.y, 150, 274, true));
-				projectiles.add (new FountainProjectile(p.x, p.y, 150, 266, true));
-				projectiles.add (new FountainProjectile(p.x, p.y, 150, 276, true));
-				projectiles.add (new FountainProjectile(p.x, p.y, 150, 255, true));
-				projectiles.add (new FountainProjectile(p.x, p.y, 150, 265, true));
-				projectiles.add (new FountainProjectile(p.x, p.y, 150, 274, true));
+				projectiles.add (new FountainProjectile(this, p.x, p.y, 150, 270, true));
+				projectiles.add (new FountainProjectile(this, p.x, p.y, 150, 271, true));
+				projectiles.add (new FountainProjectile(this, p.x, p.y, 150, 272, true));
+				projectiles.add (new FountainProjectile(this, p.x, p.y, 150, 273, true));
+				projectiles.add (new FountainProjectile(this, p.x, p.y, 150, 274, true));
+				projectiles.add (new FountainProjectile(this, p.x, p.y, 150, 266, true));
+				projectiles.add (new FountainProjectile(this, p.x, p.y, 150, 276, true));
+				projectiles.add (new FountainProjectile(this, p.x, p.y, 150, 255, true));
+				projectiles.add (new FountainProjectile(this, p.x, p.y, 150, 265, true));
+				projectiles.add (new FountainProjectile(this, p.x, p.y, 150, 274, true));
 				System.out.println("");
 			}
 			
@@ -733,7 +738,7 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 
 		//draws land
 		g2.setPaint(new GradientPaint(0, 0,  new Color (124, 203, 255), 0, Control.controlPanelY, new Color (11, 50, 75)));
-		g2.fillPolygon(Terrain.landX, Terrain.landY, 952);	// Draw polygon containing land
+		g2.fillPolygon(landX, landY, 952);	// Draw polygon containing land
 
 		//draw projectiles
 		g.setColor(Color.white);
@@ -751,7 +756,7 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 			double angle;
 
 			//calculates angle for tank body
-			dy = Terrain.getY((int)t.x + 2) - Terrain.getY((int)t.x - 2) ;
+			dy = getY((int)t.x + 2) - getY((int)t.x - 2) ;
 			angle = Math.atan(dy/4);
 			angle = angle/RADS;
 			
@@ -959,8 +964,7 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 		return mouseY;
 	}
 	
-	public static int [] getLand (int mapNum) {
-		initialMap(mapNum);
+	public int [] getLand (int mapNum) {
 		return landY;
 	}
 
