@@ -29,6 +29,30 @@ public class DrawTank {
 		tankArmTop = new Color (2,181,20);
 		tankArmBottom = new Color (15,57,15);
 	}
+	
+	public static void colorPink () {
+		tankBodyTop = new Color (198,0,138);
+		tankBodyBottom = new Color (102,0,72);
+		tankTrackTop = new Color (171,5,121);
+		tankTrackBottom = new Color (81,0,57);
+		tankWheelTop = new Color (118,2,83);
+		tankWheelBottom = new Color (53,0,37);
+		tankDarkAreas = new Color (30,0,21);
+		tankArmTop = new Color (168,0,117);
+		tankArmBottom = new Color (87,0,61);
+	}
+	
+	public static void colorBlue () {
+		tankBodyTop = new Color (0,114,228);
+		tankBodyBottom = new Color (0,18,91);
+		tankTrackTop = new Color (0,73,145);
+		tankTrackBottom = new Color (0,34,68);
+		tankWheelTop = new Color (0,29,145);
+		tankWheelBottom = new Color (0,13,63);
+		tankDarkAreas = new Color (0,5,23);
+		tankArmTop = new Color (4,44,202);
+		tankArmBottom = new Color (0,28,129);
+	}
 
 	public static void colorRed () {
 		tankBodyTop = new Color (196,0,0);

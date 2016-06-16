@@ -58,6 +58,10 @@ public class TextReferences extends JLabel{
 		setHorizontalAlignment(SwingConstants.CENTER);
 		setVerticalAlignment(SwingConstants.CENTER);
 	}
+	public void setAllignmentTop () {
+		setHorizontalAlignment(SwingConstants.CENTER);
+		setVerticalAlignment(SwingConstants.TOP);
+	}
 	public void setLabelText (String text) {
 		this.text = text;
 		setText(text);
@@ -67,5 +71,9 @@ public class TextReferences extends JLabel{
 			setForeground(new Color (0, 153, 0));
 		else
 			setForeground(textColor);
+	}
+	public void setTextColor (Color textColor) {
+		this.textColor = textColor;
+		setForeground(textColor);
 	}
 }

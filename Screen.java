@@ -30,6 +30,12 @@ public class Screen {
 	
 	static int currentScreen;
 	static int startMap = 3;
+	static int maxFuel= 100;
+	static int maxHealth = 300;
+	
+	
+	
+	
 	static final int DELAY = 5;
 	static final int MENU_SCREEN = 1;
 	static final int GAME_SCREEN = 4;
@@ -37,17 +43,21 @@ public class Screen {
 	static final int INSTRUCTION_SCREEN = 2;
 	
 	
-	static JFrame myWindow = new JFrame ();
+	static JFrame frame;
 	static Timer animationTimer;
 	static int numPlayers = 3;
 	static boolean startGame;
-	private static int gameMode;
+	private static int gameMode = Constants.TEAM;
 	
 	static final int FREE_FOR_ALL = 1;
 	static final int TEAM = 2;
 	protected static final int GAME_CUSTOMIZER_SCREEN = 5;
 	
-	static JPanel mainScreen;	
+	static JPanel mainScreen;
+	private static int[] tankTeam;
+	private static int[] tankTops;
+	private static int[] tankTracks;
+	private static int[] tankColor;	
 	
 	public static void main (String args[]){
 
@@ -68,7 +78,7 @@ public class Screen {
 		}
 		
 		System.out.println("starting game");
-		gameScreen = new GameScreen(startMap, numPlayers, gameMode);
+		gameScreen = new GameScreen(startMap, numPlayers, gameMode, maxHealth, maxFuel, tankTeam, tankTops, tankTracks, tankColor);
 		
 	}
 	
@@ -86,7 +96,7 @@ public class Screen {
 	  }
 	
 	private static void createAndShowGUI(){
-		JFrame frame = new JFrame ("Tanker Manz");
+		frame = new JFrame ("Tanker Manz");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(Terrain.LENGTH,Terrain.HEIGHT);
 		frame.setResizable (false);
@@ -105,7 +115,8 @@ public class Screen {
 	
 	
 	public static void startGame (){
-		myWindow.dispose();
+		frame.setVisible(false);
+		changeScreen (MENU_SCREEN);
 		startGame = true;
 	}
 	
@@ -115,6 +126,41 @@ public class Screen {
 		currentScreen = window;
 	}
 	
+	public static void setMap(int startMap){
+		Screen.startMap = startMap;
+	}
+	
+	public static void setPlayers(int numPlayers){
+		Screen.numPlayers = numPlayers;
+	}
+	
+	public static void setGameMode (int gameMode){
+		Screen.gameMode = gameMode;
+	}
+	
+	public static void setMaxHealth (int maxHealth){
+		Screen.maxHealth = maxHealth;
+	}
+	
+	public static void setMaxFuel (int maxFuel){
+		Screen.maxFuel = maxFuel;
+	}
+	
+	public static void setTankTeam (int [] tankTeam){
+		Screen.tankTeam = tankTeam;
+	}
+	
+	public static void setTankTops(int [] tankTops){
+		Screen.tankTops = tankTops;
+	}
+	
+	public static void setTankTracks(int [] tankTracks){
+		Screen.tankTracks = tankTracks;
+	}
+	
+	public static void setTankColor (int [] tankColor){
+		Screen.tankColor = tankColor;
+	}
 	
 	static ActionListener animate = new ActionListener(){
 	public void actionPerformed(ActionEvent arg0) {

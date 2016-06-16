@@ -21,13 +21,13 @@ public class GameScreen extends JFrame {
 	static final int DELAY = 5;
 	static Timer animationTimer;
 	
-	public GameScreen (int startMap, int numPlayers, int gameMode){
+	public GameScreen (int startMap, int numPlayers, int gameMode, int maxHealth, int maxFuel, int[] tankTeam, int[] tankTops, int[] tankTracks, int[] tankColor){
 						
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setSize(Terrain.LENGTH,Terrain.HEIGHT);
 		this.setResizable (false);
 		
-		terrain = new Terrain(startMap,numPlayers, gameMode);
+		terrain = new Terrain(startMap,numPlayers, gameMode, maxHealth, maxFuel, tankTeam, tankTops, tankTracks, tankColor);
 		this.add(terrain);
 		
 		animationTimer = new Timer(DELAY, animate);
@@ -35,7 +35,8 @@ public class GameScreen extends JFrame {
 		this.setVisible(true);
 
 		gameLoop();
-				
+		
+		
 	}
 	
 	public static void gameLoop(){
@@ -43,7 +44,7 @@ public class GameScreen extends JFrame {
 		long currTime = startTime;
 //		System.out.println("before while");
 		
-		while (true) {
+		while (!terrain.getWin()) {
 			int elapsedTime = (int)(System.currentTimeMillis() - currTime);
 			currTime = System.currentTimeMillis();
 //			System.out.println("before terrain update");

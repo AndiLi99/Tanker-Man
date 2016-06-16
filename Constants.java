@@ -22,6 +22,9 @@ public class Constants {
 	public static final int DBL_STAIR_STEP = 4;
 	public static final int EMPIRE = 5;
 
+	// Images for game customizer
+	public static final int CUSTOM_TANK_HEIGHT = 25;
+	
 	// Tank Parts
 	public static final int TANK_HEIGHT = 15;
 	public static final int TANK_TOP_DEFAULT = 0;
@@ -30,6 +33,13 @@ public class Constants {
 
 	public static final int TANK_TRACK_DEFAULT = 0;
 	public static final int TANK_TRACK_MODERN = 1;
+	
+	public static final int NUM_COLORS = 5;
+	public static final int TANK_COLOR_GREY = -1;
+	public static final int TANK_COLOR_GREEN = 0;
+	public static final int TANK_COLOR_RED = 1;
+	public static final int TANK_COLOR_PINK = 2;
+	public static final int TANK_COLOR_BLUE = 3;
 	
 	// Other graphics variables
 	public static final int AIM_RADIUS = 150;

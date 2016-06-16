@@ -35,6 +35,8 @@ public class Projectile {
 	public Projectile (Terrain terrain, double x, double y, int power, double angle){
 		this.x = x;
 		this.y = y - 5;
+		//power multiplier
+		power = power * 3;
 		this.velocityX = (int)(Math.cos(angle*Terrain.RADS)*power);
 		this.velocityY = (int)(Math.sin(angle*Terrain.RADS)*power);
 		this.terrain = terrain;
@@ -66,20 +68,13 @@ public class Projectile {
 	}
 	
 	public boolean isHit (){
-		if (this.y >= terrain.getY((int)x)) 
+		if (this.y >= terrain.getY((int)x) && x != Terrain.LENGTH) 
 			return true;
 		else
 			return false; 
 	}
 
 	public boolean deleteOnSide(){
-		if (x < 0 && y > terrain.getY(0) - Terrain.REFLECT_BARRIER_HEIGHT){
-			return false;	
-		}
-		if (x > Terrain.LENGTH && y > terrain.getY(Terrain.LENGTH) - Terrain.REFLECT_BARRIER_HEIGHT){
-			return false;	
-		}
-
 		if (x < 0 || x > Terrain.LENGTH)
 			return true;
 		else
@@ -87,10 +82,10 @@ public class Projectile {
 	}
 
 	public boolean reflectOnSide() {
-		if (x < 0 && y > terrain.getY(0) - Terrain.REFLECT_BARRIER_HEIGHT){
+		if (x < 5 && y > terrain.getY(0) - Terrain.REFLECT_BARRIER_HEIGHT){
 			return true;
 		}
-		if (x > Terrain.LENGTH && y > terrain.getY(945) - Terrain.REFLECT_BARRIER_HEIGHT){
+		if (x > Terrain.LENGTH-5 && y > terrain.getY(Terrain.LENGTH-1) - Terrain.REFLECT_BARRIER_HEIGHT){
 			System.out.println("reflect on right");
 			return true;	
 		}

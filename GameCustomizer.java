@@ -33,10 +33,10 @@ public class GameCustomizer extends JPanel implements MouseMotionListener, Mouse
 	static int numPlayers = 2;
 
 	// Tank Variables
-	int teamTank1 = 0; int teamTank2 = 0; int teamTank3 = 0; int teamTank4 = 0;
-	int tankType1 = 0; int tankType2 = 0; int tankType3 = 0; int tankType4 = 0;
-	int tankColor1 = 0; int tankColor2 = 0; int tankColor3 = 0; int tankColor4 = 0;
-	String tankName1; String tankName2; String tankName3; String tankName4;
+	int [] tankTeam = new int [Constants.MAX_PLAYERS];
+	int [] tankTops = new int [Constants.MAX_PLAYERS];
+	int [] tankTracks = new int [Constants.MAX_PLAYERS];
+	int [] tankColor = new int [Constants.MAX_PLAYERS];
 
 	// Variables used in this class
 	int mouseX = 0; int mouseY = 0;
@@ -70,6 +70,9 @@ public class GameCustomizer extends JPanel implements MouseMotionListener, Mouse
 	static JLabel mapName;
 	static JLabel STARTGAME;
 
+	static ArrayList <Scrollers> swapTankTop = new ArrayList <Scrollers> ();
+	static ArrayList <Scrollers> swapTankTrack = new ArrayList <Scrollers>();
+	
 	static TextReferences HP;
 	static ArrayList <TextReferences> HPs = new ArrayList <TextReferences>();
 	static int [] HPamounts = { 100, 150, 200, 300, 500 };
@@ -82,8 +85,10 @@ public class GameCustomizer extends JPanel implements MouseMotionListener, Mouse
 	static ArrayList <TextReferences> battles = new ArrayList <TextReferences>();
 	static String [] battleType = { "Free For All", "Team Battle" };
 	
-	static TextReferences team;
+	static ArrayList <TextReferences> team = new ArrayList <TextReferences>();
 	static ArrayList <TextReferences> teams = new ArrayList <TextReferences>();
+	static ArrayList <Scrollers> teamOption = new ArrayList <Scrollers>();
+	static int [] onTeam = { 0, 1, 2 };
 
 	static final int SUBTITLE_LENGTH = 250;
 	static final int SUBTITLE_HEIGHT = 20;
@@ -106,6 +111,10 @@ public class GameCustomizer extends JPanel implements MouseMotionListener, Mouse
 	static boolean decreaseNumPlayers = false;
 	static boolean increaseNumPlayers = false;
 
+	static int teamBoxX = 320;
+	static int teamBoxLength = 100;
+	static int tankBoxX = 430;
+	
 
 	public GameCustomizer () {
 		setLayout(null);
@@ -126,6 +135,12 @@ public class GameCustomizer extends JPanel implements MouseMotionListener, Mouse
 			add(t);
 		}
 		for (TextReferences t: battles) {
+			add(t);
+		}
+		for (TextReferences t: team) {
+			add(t);
+		}
+		for (TextReferences t: teams) {
 			add(t);
 		}
 
@@ -167,6 +182,7 @@ public class GameCustomizer extends JPanel implements MouseMotionListener, Mouse
 		STARTGAME.setSize(startGameLength, startGameHeight);
 		STARTGAME.setLocation(startGameX, startGameY);
 
+		// Set all text other object JLabels
 		Font fontBold = new Font("Arial", Font.BOLD, 20);
 		Color color = Color.white;
 		HP = new TextReferences(SUBTITLE_X, SUBTITLE_Y, "Player HP: 300", SUBTITLE_LENGTH, SUBTITLE_HEIGHT, fontBold, color, -1);
@@ -212,6 +228,70 @@ public class GameCustomizer extends JPanel implements MouseMotionListener, Mouse
 			}
 			battles.add(txt);
 		}
+
+		// Initialize objects to make the text TEAM in the team selector box
+		for (int a = 0; a < Constants.MAX_PLAYERS; a++) {
+			int playerNumberHeight = playerBoxHeight/5;
+			int boxHeight = (playerBoxHeight - playerNumberHeight)/4;
+			int Y = playerBoxY + playerNumberHeight + a*boxHeight;
+			int X = teamBoxX;
+			String text = "Team";
+			TextReferences txt = new TextReferences(X, Y, text, teamBoxLength, playerBoxHeight/5, fontBold, color, a);
+			txt.setAllignmentTop();
+			team.add(txt);
+		}
+
+		// Draw scrollers for team options
+		for (int a = 0; a < Constants.MAX_PLAYERS; a++) {
+			int scrollerLength = 10;
+			int scrollerHeight = 8;
+			int playerNumberHeight = playerBoxHeight/5;
+			int boxHeight = (playerBoxHeight - playerNumberHeight)/4;
+			int Y = playerBoxY + playerNumberHeight + a*boxHeight + boxHeight/2;
+			int X1 = teamBoxX + teamBoxLength/4 - scrollerLength;
+			int X2 = teamBoxX + 3*teamBoxLength/4;
+			Scrollers scroll = new Scrollers(X1, Y, X2, Y, scrollerLength, scrollerHeight, a, 
+					color, color);
+			System.out.println(scroll.colorLeft);
+			teamOption.add(scroll);
+		}
+
+		// Labels for team number
+		for (int a = 0; a < Constants.MAX_PLAYERS; a++) {
+			int playerNumberHeight = playerBoxHeight/5;
+			int boxHeight = (playerBoxHeight - playerNumberHeight)/4;
+			int Y = playerBoxY + playerNumberHeight + a*boxHeight + 5*boxHeight/12;
+			int X = teamBoxX;
+			String text = "?";
+			TextReferences txt = new TextReferences(X, Y, text, teamBoxLength, playerBoxHeight/5, fontBold, color, a);
+			txt.setAllignmentTop();
+			teams.add(txt);
+		}
+
+		for (int a = 0; a < Constants.MAX_PLAYERS; a++) {
+			int scrollerLength = 10;
+			int scrollerHeight = 8;
+			int playerNumberHeight = playerBoxHeight/5;
+			int boxHeight = (playerBoxHeight - playerNumberHeight)/4;
+			int Y = playerBoxY + playerNumberHeight + a*boxHeight + boxHeight/4;
+			int X1 = tankBoxX + teamBoxLength/5 - scrollerLength;
+			int X2 = tankBoxX + 4*teamBoxLength/5;
+			Scrollers scroll = new Scrollers(X1, Y, X2, Y, scrollerLength, scrollerHeight, a, 
+					color, color);
+			swapTankTop.add(scroll);
+		}
+		for (int a = 0; a < Constants.MAX_PLAYERS; a++) {
+			int scrollerLength = 10;
+			int scrollerHeight = 8;
+			int playerNumberHeight = playerBoxHeight/5;
+			int boxHeight = (playerBoxHeight - playerNumberHeight)/4;
+			int Y = playerBoxY + playerNumberHeight + a*boxHeight + boxHeight/2;
+			int X1 = tankBoxX + teamBoxLength/5 - scrollerLength;
+			int X2 = tankBoxX + 4*teamBoxLength/5;
+			Scrollers scroll = new Scrollers(X1, Y, X2, Y, scrollerLength, scrollerHeight, a, 
+					color, color);
+			swapTankTrack.add(scroll);
+		}
 	}
 
 	
@@ -230,14 +310,18 @@ public class GameCustomizer extends JPanel implements MouseMotionListener, Mouse
 	}
 
 	public void updateGameOptions () {
-		for (TextReferences t: HPs) {
+		for (TextReferences t: HPs) 
 			t.setMouseIsIn(mouseX, mouseY);
-		}
-		for (TextReferences t: fuels) {
+		for (TextReferences t: fuels) 
 			t.setMouseIsIn(mouseX, mouseY);
-		}
 		for (TextReferences t: battles) 
 			t.setMouseIsIn(mouseX, mouseY);
+		for (Scrollers s: teamOption)
+			s.setIsInScroller(mouseX, mouseY);
+		for (Scrollers s: swapTankTop)
+			s.setIsInScroller(mouseX, mouseY);
+		for (Scrollers s: swapTankTrack)
+			s.setIsInScroller(mouseX, mouseY);
 	}
 
 	public void paintComponent (Graphics g) {
@@ -250,17 +334,40 @@ public class GameCustomizer extends JPanel implements MouseMotionListener, Mouse
 		g2.setPaint(new GradientPaint(0, landDrawY, new Color (124, 203, 255), 0, Terrain.HEIGHT, new Color (0, 0, 75)));
 		g2.fillRect(0, landDrawY, Terrain.LENGTH, Terrain.HEIGHT - landDrawY);
 
-		// Checks if mouse is in any of the text fields
-		for (TextReferences t: HPs) {
-			t.setMouseIsIn(mouseX, mouseY);
-		}
 
 		drawPlayerBox(g);
 		drawMapOption(g);
 		drawStartButton(g);
+		// Draw scrollers for map
+		drawScrollers(g);
+		drawTanks(g);
+		// Checks if mouse is in any of the text reference objects
 		updateGameOptions();
 	}
-
+	
+	public void drawScrollers (Graphics g) {
+		for (Scrollers s: teamOption)
+			s.drawScrollers(g);
+		for (Scrollers s: swapTankTop)
+			s.drawScrollers(g);
+		for (Scrollers s: swapTankTrack)
+			s.drawScrollers(g);
+	}
+	
+	public void drawTanks (Graphics g) {
+		for (int a = 0; a < Constants.MAX_PLAYERS; a++) {
+			int playerNumberHeight = playerBoxHeight/5;
+			int boxHeight = (playerBoxHeight - playerNumberHeight)/4;
+			int Y = playerBoxY + playerNumberHeight + a*boxHeight + 5*boxHeight/8;
+			int X = tankBoxX + teamBoxLength/2;
+			if (a > numPlayers - 1) DrawTank.colorGrey();
+			else {
+				if (tankColor[a] == Constants.TANK_COLOR_GREEN) DrawTank.colorGreen();
+				else if (tankColor[a] == Constants.TANK_COLOR_RED) DrawTank.colorRed();
+			}
+			DrawTank.drawCustomTank(g, X, Y, Constants.CUSTOM_TANK_HEIGHT, 0, 340, tankTops[a], tankTracks[a]);
+		}
+	}
 	public void drawPlayerBox (Graphics g) {
 		// Spaces between each row
 		int openSpace = 10;
@@ -268,9 +375,6 @@ public class GameCustomizer extends JPanel implements MouseMotionListener, Mouse
 		int playerNumberHeight = playerBoxHeight/5;
 		int playersOptionsX = playerBoxX + openSpace;
 		int playersOptionsLength = 275;
-		int teamBoxX = 320;
-		int teamBoxLength = 100;
-		int tankBoxX = 430;
 		int tankBoxLength = 100;
 		Graphics2D g2 = (Graphics2D) g;
 		// Draw background
@@ -300,9 +404,10 @@ public class GameCustomizer extends JPanel implements MouseMotionListener, Mouse
 				g2.setPaint(new GradientPaint(0, Y, new Color (25, 25, 25), 0,
 						Y + boxHeight, new Color (40, 40, 40)));
 			}
-			else 
+			else {
 				g2.setPaint(new GradientPaint(0, Y, new Color (1, 1, 13), 0,
 						Y + boxHeight, new Color (4, 8, 55)));
+			}
 			g.fillRect(teamBoxX, Y - openSpace/2, teamBoxLength, boxHeight - openSpace);
 		}
 
@@ -318,6 +423,39 @@ public class GameCustomizer extends JPanel implements MouseMotionListener, Mouse
 				g2.setPaint(new GradientPaint(0, Y, new Color (1, 1, 13), 0,
 						Y + boxHeight, new Color (4, 8, 55)));
 			g.fillRect(tankBoxX, Y - openSpace/2, tankBoxLength, boxHeight - openSpace);
+		}
+
+		for (TextReferences t: team) {
+			if (gameType == Constants.FFA) t.setTextColor(new Color(80, 80, 80));
+			else {
+				if (t.textReferenceID > numPlayers - 1) t.setTextColor(new Color(80, 80, 80));
+				else t.setTextColor(Color.white);
+			}
+		}
+
+		for (TextReferences t: teams) {
+			if (gameType == Constants.FFA) t.setTextColor(new Color(80, 80, 80));
+			else {
+				if (t.textReferenceID > numPlayers - 1) t.setTextColor(new Color(80, 80, 80));
+				else t.setTextColor(Color.white);
+			}
+		}
+
+		for (Scrollers s: teamOption) {
+			if (gameType == Constants.FFA) s.setColors((new Color(80, 80, 80)), (new Color(80, 80, 80)));
+			else {
+				if (s.scrollerID > numPlayers - 1) s.setColors((new Color(80, 80, 80)), (new Color(80, 80, 80)));
+				else s.setColors(Color.white, Color.white);
+			}
+		}
+
+		for (Scrollers s: swapTankTop) {
+			if (s.scrollerID > numPlayers - 1) s.setColors((new Color(80, 80, 80)), (new Color(80, 80, 80)));
+			else s.setColors(Color.white, Color.white);
+		}
+		for (Scrollers s: swapTankTrack) {
+			if (s.scrollerID > numPlayers - 1) s.setColors((new Color(80, 80, 80)), (new Color(80, 80, 80)));
+			else s.setColors(Color.white, Color.white);
 		}
 
 		drawPlayerNumScroller(g2, 20, 10);
@@ -340,9 +478,9 @@ public class GameCustomizer extends JPanel implements MouseMotionListener, Mouse
 		Terrain terrain = new Terrain(mapNum);
 		int [] tempLandY = terrain.getLand(mapNum);
 		int [] landY = new int [952];
-		
+
 		for (int i = 0; i < landY.length; i ++) landY [i] = tempLandY [i];
-		
+
 		landY = resizeLandY(landY, mapHeight);
 
 		int [] landX = new int [952];
@@ -356,7 +494,7 @@ public class GameCustomizer extends JPanel implements MouseMotionListener, Mouse
 	}
 
 	public void drawPlayerNumScroller (Graphics g, int height, int distance) {
-		
+
 		// Left arrow
 		int [] triangleX1 = {numPlayersTitleX - height - distance, numPlayersTitleX - distance, numPlayersTitleX - distance };
 		int [] triangleY = {numPlayersTitleY + playerTitleHeight/2, numPlayersTitleY + playerTitleHeight/2 + height/2, numPlayersTitleY + playerTitleHeight/2 - height/2};
@@ -367,7 +505,7 @@ public class GameCustomizer extends JPanel implements MouseMotionListener, Mouse
 			g.setColor(Color.white);
 
 		g.fillPolygon(triangleX1, triangleY, 3);
-		
+
 		int [] triangleX2 = {numPlayersTitleX + numPlayersTitleLength + distance + height, numPlayersTitleX + numPlayersTitleLength + distance, 
 				numPlayersTitleX + numPlayersTitleLength + distance};
 		if (numPlayers == Constants.MAX_PLAYERS)
@@ -376,7 +514,7 @@ public class GameCustomizer extends JPanel implements MouseMotionListener, Mouse
 			g.setColor(Color.white);
 
 		g.fillPolygon(triangleX2, triangleY, 3);
-		
+
 		isInNumPlayer(mouseX, mouseY, triangleX1[0], triangleX2[1], triangleY[2], height);
 	}
 
@@ -437,9 +575,17 @@ public class GameCustomizer extends JPanel implements MouseMotionListener, Mouse
 			mapNum = mapNum%5 + 1;
 
 		// Check if user wants to start game
-		if (inStartGame) 
+		if (inStartGame) {
 			Screen.startGame();
-		
+			Screen.setMaxHealth(maxHP);
+			Screen.setMaxFuel(maxFuel);
+			Screen.setGameMode(gameType);
+			Screen.setPlayers(numPlayers);
+			Screen.setTankColor(tankColor);
+			Screen.setTankTeam(tankTeam);
+			Screen.setTankTops(tankTops);
+			Screen.setTankTracks(tankTracks);
+		}
 		if (increaseNumPlayers && numPlayers < Constants.MAX_PLAYERS) numPlayers ++;
 		else if (decreaseNumPlayers && numPlayers > Constants.MIN_PLAYERS) numPlayers --;
 		numPlayersTitle.setText(Integer.toString(numPlayers));
@@ -460,6 +606,7 @@ public class GameCustomizer extends JPanel implements MouseMotionListener, Mouse
 				if (t.isSelected) {
 					HP.setLabelText("Player HP: " + Integer.toString(HPamounts[t.textReferenceID]));
 					maxHP = HPamounts[t.textReferenceID];
+
 				}
 			}
 		}
@@ -484,7 +631,7 @@ public class GameCustomizer extends JPanel implements MouseMotionListener, Mouse
 			}
 		}
 
-		// Set false to check for fuel clicks
+		// Set false to check for other clicks
 		ifClickedIn = false;
 		for (TextReferences t: battles) {
 			if (t.mouseIsIn) 
@@ -501,6 +648,59 @@ public class GameCustomizer extends JPanel implements MouseMotionListener, Mouse
 					battle.setLabelText("Game Type: " + battleType[t.textReferenceID]);
 					gameType = t.textReferenceID;
 				}
+			}
+		}
+
+		// Update scrollers
+		if (gameType != Constants.FFA) {
+			for (Scrollers s: teamOption) {
+				if (s.getIsInLeftScroller() && s.scrollerID < numPlayers) {
+					tankTeam[s.scrollerID]--;
+					if (tankTeam[s.scrollerID] < 0) 
+						tankTeam[s.scrollerID] = onTeam.length - 1;
+
+					if (tankTeam[s.scrollerID] == 1) tankColor[s.scrollerID] = Constants.TANK_COLOR_GREEN;
+					else if (tankTeam[s.scrollerID] == 2) tankColor[s.scrollerID] = Constants.TANK_COLOR_RED;
+				}
+				else if (s.getIsInRightScroller() && s.scrollerID < numPlayers) {
+					tankTeam[s.scrollerID]++;
+					tankTeam[s.scrollerID] = tankTeam[s.scrollerID]%onTeam.length;
+					
+					if (tankTeam[s.scrollerID] == 1) tankColor[s.scrollerID] = Constants.TANK_COLOR_GREEN;
+					else if (tankTeam[s.scrollerID] == 2) tankColor[s.scrollerID] = Constants.TANK_COLOR_RED;
+				}
+			}
+			for (TextReferences t: teams) {
+				String txt;
+				if (tankTeam[t.textReferenceID] == 0)
+					txt = "?";
+				else 
+					txt = Integer.toString(tankTeam[t.textReferenceID]);
+				t.setLabelText(txt);
+			}
+		}
+		
+		// Scrollers for customizing tanks
+		for (Scrollers s: swapTankTop) {
+			if (s.getIsInLeftScroller() && s.scrollerID < numPlayers) {
+				tankTops[s.scrollerID]--;
+				if (tankTops[s.scrollerID] < 0) 
+					tankTops[s.scrollerID] = Constants.TANK_TOP_CIRCLE;
+			}
+			else if (s.getIsInRightScroller() && s.scrollerID < numPlayers) {
+				tankTops[s.scrollerID]++;
+				tankTops[s.scrollerID] = tankTops[s.scrollerID]%(Constants.TANK_TOP_CIRCLE+1);
+			}
+		}
+		for (Scrollers s: swapTankTrack) {
+			if (s.getIsInLeftScroller() && s.scrollerID < numPlayers) {
+				tankTracks[s.scrollerID]--;
+				if (tankTracks[s.scrollerID] < 0) 
+					tankTracks[s.scrollerID] = Constants.TANK_TRACK_MODERN;
+			}
+			else if (s.getIsInRightScroller() && s.scrollerID < numPlayers) {
+				tankTracks[s.scrollerID]++;
+				tankTracks[s.scrollerID] = tankTracks[s.scrollerID]%(Constants.TANK_TRACK_MODERN+1);
 			}
 		}
 	}
