@@ -117,6 +117,7 @@ public class DrawWeaponChooser {
 		g.setFont(new Font ("Arial", Font.BOLD, 15));
 		g.setColor(Color.white);
 		g.drawString(Tank.weaponNames[projectileID], X + spriteBoxLength + 5, Y + 8*boxHeight/9);
+		g.drawString(String.valueOf(Terrain.getCurrentPlayer().getCurrentWeaponAmmo()),  X + spriteBoxLength + 145, Y + 8*boxHeight/9);
 		drawSpriteBox(g, projectileID, X, Y, spriteBoxLength, boxHeight);
 	}
 

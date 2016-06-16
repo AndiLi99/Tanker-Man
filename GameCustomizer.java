@@ -580,6 +580,7 @@ public class GameCustomizer extends JPanel implements MouseMotionListener, Mouse
 			Screen.setMaxHealth(maxHP);
 			Screen.setMaxFuel(maxFuel);
 			Screen.setGameMode(gameType);
+			Screen.setMap(mapNum);
 			Screen.setPlayers(numPlayers);
 			Screen.setTankColor(tankColor);
 			Screen.setTankTeam(tankTeam);

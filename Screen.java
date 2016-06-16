@@ -63,8 +63,6 @@ public class Screen {
 
 		createAndShowGUI();
 
-		
-		
 		while(true){
 			try {
 				Thread.sleep(100);
@@ -92,7 +90,7 @@ public class Screen {
 		  mainScreen = new JPanel(new CardLayout());
 		  mainScreen.add(menuScreen, String.valueOf (MENU_SCREEN));
 		  mainScreen.add(gameCustomizer, String.valueOf (GAME_CUSTOMIZER_SCREEN));
-		  mainScreen.add(creditsScreen, String.valueOf(INSTRUCTION_SCREEN));
+		  mainScreen.add(creditsScreen, String.valueOf(CREDIT_SCREEN));
 		  
 		  pane.add(mainScreen, BorderLayout.CENTER);
 	  }

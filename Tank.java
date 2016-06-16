@@ -37,6 +37,7 @@ public class Tank {
 	public static final int MAX_POWER = 300;
 	public static int MAX_HEALTH = 300;
 	public static final double HIT_RADIUS = 15;
+	static final int MAX_SLOPE = 6;
 	
 	public Tank (Terrain terrain, int x, int playerID, int team, int tankTops, int tankTracks, int tankColor){
 		fuel = MAX_FUEL;
@@ -114,7 +115,7 @@ public class Tank {
 	}
 	
 	private boolean canMoveLeft(){
-		if (x - LENGTH/2 > 0 && fuel > 0 && terrain.slope(x-1) > -2){
+		if (x - LENGTH/2 > 0 && fuel > 0 && terrain.slope(x-1) > -1*MAX_SLOPE){
 			return true;
 		}
 		else
@@ -122,7 +123,7 @@ public class Tank {
 	}
 	
 	private boolean canMoveRight(){
-		if (this.x + LENGTH/2 < Terrain.LENGTH && fuel > 0 && terrain.slope(x+1) < 2){
+		if (this.x + LENGTH/2 < Terrain.LENGTH && fuel > 0 && terrain.slope(x+1) < MAX_SLOPE){
 			return true;
 		}
 		else

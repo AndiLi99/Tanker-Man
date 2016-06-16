@@ -17,12 +17,12 @@ public class CreditsScreen extends JPanel implements MouseMotionListener, MouseL
 	int mouseX = 0; int mouseY = 0;
 
 	int tankX1 = 200; int tankY1 = 400;
-	int tankArmAngle1 = 30;
+	int tankArmAngle1 = 330;
 
 	int tankX2 = 700; int tankY2 = 400;
-	int tankArmAngle2 = 305;
+	int tankArmAngle2 = 190;
 
-	final int tankHeight = 90;
+	final int tankHeight = 60;
 	int tankAngle = 0;
 
 	int creditLabelLength = 950; int creditLabelHeight = 100;
