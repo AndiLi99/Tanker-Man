@@ -1,6 +1,7 @@
 package tankermanz;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -110,6 +111,19 @@ public class DrawTank {
 			tankTracksDefault(g, tankX, tankY, height, angle);
 		else if (tracks == Constants.TANK_TRACK_MODERN)
 			tankTracksModern(g, tankX, tankY, height, angle);
+	}
+	
+	public static void drawTankInfo (Graphics g, int tankX, int tankY, int power, int angle, String name) {
+		int down = 15;
+		String powAndAngle = Integer.toString(power) + ", " + Integer.toString(angle);
+		int approxLength = powAndAngle.length()*6;
+		g.setColor(Color.white);
+		g.setFont(new Font("Arial", Font.PLAIN, 10));
+		g.drawString(powAndAngle, tankX - approxLength/2, tankY + down);
+		
+		int up = 20;
+		approxLength = name.length()*6;
+		g.drawString(name, tankX - approxLength/2, tankY - up);
 	}
 
 	public static void tankArm (Graphics g, int tankX, int tankY, int height, int armAngle) {

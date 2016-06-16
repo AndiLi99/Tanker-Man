@@ -9,7 +9,6 @@ import java.awt.geom.AffineTransform;
 
 //max
 public class Control {
-
 	static int controlPanelHeight = 150;
 	static int controlPanelY = 350;
 
@@ -41,6 +40,9 @@ public class Control {
 
 	static boolean clickFire = false;
 
+	public static void drawBackButton () {
+		
+	}
 	public static void drawBar (Graphics g) {
 		Graphics2D g2 = (Graphics2D) g;	
 		g2.setPaint(new GradientPaint(0, 350,  new Color (66, 66, 66), 0, 500, new Color (22, 22, 22)));
@@ -83,6 +85,10 @@ public class Control {
 
 		// Tank 
 		Tank t = Terrain.getCurrentPlayer();
+		if (t.tankColor == Constants.TANK_COLOR_GREEN) DrawTank.colorGreen();
+		else if (t.tankColor == Constants.TANK_COLOR_RED) DrawTank.colorRed();
+		else if (t.tankColor == Constants.TANK_COLOR_BLUE) DrawTank.colorBlue();
+		else if (t.tankColor == Constants.TANK_COLOR_PINK) DrawTank.colorPink(); 
 		DrawTank.drawCustomTank(g, healthBoxX + healthBoxLength/2, healthBoxY + 5*boxHeight/6, 25, 0, 335, t.tankTops, t.tankTracks);
 	}
 
