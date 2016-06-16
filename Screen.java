@@ -86,11 +86,13 @@ public class Screen {
 		  //create the cards
 		  menuScreen = new MenuScreen();
 		  gameCustomizer = new GameCustomizer();
-
+		  creditsScreen = new CreditsScreen();
+		  
 		  //create the panel to hold the cards
 		  mainScreen = new JPanel(new CardLayout());
 		  mainScreen.add(menuScreen, String.valueOf (MENU_SCREEN));
 		  mainScreen.add(gameCustomizer, String.valueOf (GAME_CUSTOMIZER_SCREEN));
+		  mainScreen.add(creditsScreen, String.valueOf(INSTRUCTION_SCREEN));
 		  
 		  pane.add(mainScreen, BorderLayout.CENTER);
 	  }
