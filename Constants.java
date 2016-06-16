@@ -34,15 +34,10 @@ public class Constants {
 	public static final int TANK_TRACK_DEFAULT = 0;
 	public static final int TANK_TRACK_MODERN = 1;
 	
-	public static final int NUM_COLORS = 5;
-	public static final int TANK_COLOR_GREY = -1;
 	public static final int TANK_COLOR_GREEN = 0;
 	public static final int TANK_COLOR_RED = 1;
-	public static final int TANK_COLOR_PINK = 2;
-	public static final int TANK_COLOR_BLUE = 3;
+	public static final int TANK_COLOR_GREY = 2;
 	
 	// Other graphics variables
 	public static final int AIM_RADIUS = 150;
-
-	public static final int IN_GAME_TANK_HEIGHT = 18;
 }

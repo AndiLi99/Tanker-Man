@@ -91,8 +91,7 @@ public class DrawWeaponChooser {
 				projectileID == Projectile.EXPLOSIVE_BULLET_PROJECTILE || projectileID == Projectile.TRIPLE_SHOT_PROJECTILE ||
 				projectileID == Projectile.DOZEN_SHOT_PROJECTILE)
 			grey();
-		else if (projectileID == Projectile.SPRAY_PROJECTILE || projectileID == Projectile.STREAM_PROJECTILE ||
-				projectileID == Projectile.FOUNTAIN_PROJECTILE)
+		else if (projectileID == Projectile.SPRAY_PROJECTILE || projectileID == Projectile.STREAM_PROJECTILE)
 			blue();
 		else if (projectileID == Projectile.AIR_STRIKE_PROJECTILE || projectileID == Projectile.HORIZON_PROJECTILE || 
 				projectileID == Projectile.SNIPER_PROJECTILE)
@@ -117,14 +116,6 @@ public class DrawWeaponChooser {
 		g.setFont(new Font ("Arial", Font.BOLD, 15));
 		g.setColor(Color.white);
 		g.drawString(Tank.weaponNames[projectileID], X + spriteBoxLength + 5, Y + 8*boxHeight/9);
-		
-		if (Terrain.getCurrentPlayer().getCurrentWeapon() != Projectile.BULLET_PROJECTILE)
-			g.drawString(String.valueOf(Terrain.getCurrentPlayer().getCurrentWeaponAmmo()),  X + spriteBoxLength + 145, Y + 8*boxHeight/9);
-		else
-			g.drawString("Unlimited", X + spriteBoxLength + 85, Y + 8*boxHeight/9);
-		
-		
-		
 		drawSpriteBox(g, projectileID, X, Y, spriteBoxLength, boxHeight);
 	}
 
@@ -185,8 +176,6 @@ public class DrawWeaponChooser {
 			spriteNuke(g, X, Y, spriteBoxLength, boxHeight);
 		else if (projectileID == Projectile.ARMAGEDDON_PROJECTILE)
 			spriteArmegeddon(g, X, Y, spriteBoxLength, boxHeight);
-		else if (projectileID == Projectile.FOUNTAIN_PROJECTILE)
-			spriteFountain(g2, X, Y, spriteBoxLength, boxHeight);
 	}
 
 	private static void spriteBullet (Graphics g, int X, int Y, int spriteBoxLength, int boxHeight) {
@@ -232,26 +221,6 @@ public class DrawWeaponChooser {
 		g.fillOval(ballX3-radius, ballY3-radius, 2*radius, 2*radius);
 		g.fillOval(ballX4-radius, ballY4-radius, 2*radius, 2*radius);
 		g.fillOval(ballX5-radius, ballY5-radius, 2*radius, 2*radius);
-	}
-	private static void spriteFountain (Graphics g, int X, int Y, int spriteBoxLength, int boxHeight) {
-		int radius = 5;
-		int ballX1 = X + spriteBoxLength/4;
-		int ballX2 = X + 3*spriteBoxLength/4;
-		int ballY = Y + boxHeight/4;
-
-		// Draw trail
-		g.setColor(new Color (77,125,220));
-		int [] triangleX1 = { X + spriteBoxLength/2, ballX1 - radius, ballX1 + radius };
-		int [] triangleY = { Y + 7*boxHeight/8, ballY, ballY };
-		g.fillPolygon(triangleX1, triangleY,3);
-
-		int [] triangleX2 = { X + spriteBoxLength/2, ballX2 - radius, ballX2 + radius};
-		g.fillPolygon(triangleX2, triangleY,3);
-
-		// Draw balls
-		g.setColor(new Color  (165,232,255));
-		g.fillOval(ballX1-radius, ballY-radius, 2*radius, 2*radius);
-		g.fillOval(ballX2-radius, ballY-radius, 2*radius, 2*radius);
 	}
 	private static void spriteTripleShot (Graphics g, int X, int Y, int spriteBoxLength, int boxHeight) {
 		int ballRadius = 6;

@@ -9,6 +9,7 @@ import java.awt.geom.AffineTransform;
 
 //max
 public class Control {
+
 	static int controlPanelHeight = 150;
 	static int controlPanelY = 350;
 
@@ -40,9 +41,6 @@ public class Control {
 
 	static boolean clickFire = false;
 
-	public static void drawBackButton () {
-		
-	}
 	public static void drawBar (Graphics g) {
 		Graphics2D g2 = (Graphics2D) g;	
 		g2.setPaint(new GradientPaint(0, 350,  new Color (66, 66, 66), 0, 500, new Color (22, 22, 22)));
@@ -72,9 +70,6 @@ public class Control {
 		g2.setPaint(new GradientPaint(0, healthBoxY + distanceHpX + heightHp, new Color (2, 65, 0), 0, 
 				healthBoxY + distanceHpX, new Color (4, 105, 0)));
 		g.fillRect(healthBoxX + distanceHpX, healthBoxY + distanceHpY, hpLength, heightHp);
-		
-		g2.setPaint(new GradientPaint(0, healthBoxY + 5*boxHeight/6,  new Color (124, 203, 255), 0, healthBoxY + boxHeight, new Color (11, 50, 75)));
-		g.fillRect(healthBoxX, healthBoxY + 5*boxHeight/6, healthBoxLength, boxHeight/6);
 
 		// Write HP and Max HP on health bar
 		String strHP = Integer.toString(hp) + "/" + Integer.toString(maxHP);
@@ -84,12 +79,14 @@ public class Control {
 
 
 		// Tank 
-		Tank t = Terrain.getCurrentPlayer();
-		if (t.tankColor == Constants.TANK_COLOR_GREEN) DrawTank.colorGreen();
-		else if (t.tankColor == Constants.TANK_COLOR_RED) DrawTank.colorRed();
-		else if (t.tankColor == Constants.TANK_COLOR_BLUE) DrawTank.colorBlue();
-		else if (t.tankColor == Constants.TANK_COLOR_PINK) DrawTank.colorPink(); 
-		DrawTank.drawCustomTank(g, healthBoxX + healthBoxLength/2, healthBoxY + 5*boxHeight/6, 25, 0, 335, t.tankTops, t.tankTracks);
+		if (team == 0) {
+			DrawTank.colorGreen();
+			DrawTank.drawCircleTank(g, healthBoxX + healthBoxLength/2, healthBoxY + boxHeight - 5, 20, 0, 315);
+		}
+		else {
+			DrawTank.colorRed();
+			DrawTank.drawMountainTank(g, healthBoxX + healthBoxLength/2, healthBoxY + boxHeight - 5, 20, 0, 315);
+		}
 	}
 
 	public static void drawFuelBox (Graphics g, int fuel, int maxFuel) {
@@ -189,7 +186,6 @@ public class Control {
 			// Green color
 			g2.setPaint(new GradientPaint(fireBoxX, fireBoxY,  new Color (3, 84, 0), 
 					fireBoxX, fireBoxY + boxHeight, new Color (4, 127, 11)));
-			clickFire = false;
 		}
 		g.fillRect(fireBoxX, fireBoxY, fireBoxLength, boxHeight);
 		g.setFont(new Font("Arial", Font.BOLD, 50));

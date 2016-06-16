@@ -14,19 +14,15 @@ public class SupplyPack {
 	static final int RADIUS = 30;
 	static final int SPAWNY = 30;
 	
-	public SupplyPack (Terrain terrain, int x){
+	public SupplyPack (Terrain terrain, int x, int powerUpID, int ammo){
 		this.x = x;
 		y = SPAWNY;
-		
-		//pick a random number from 0-16
-		this.powerUpID = (int) (Math.random()*15)+1;
-		//pick a random number for ammo
-		this.ammo = (int)((Math.random())*10+0.5)+ 1;
+		this.powerUpID = powerUpID;
+		this.ammo = ammo;
 		this.terrain = terrain;
 	}
 	
 	public void moveSupplyPack (int elapsedTime){
-		//move down in constant velocity
 		y += dy*elapsedTime/Terrain.SECONDS;
 	}
 	

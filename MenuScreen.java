@@ -58,6 +58,8 @@ public class MenuScreen extends JPanel implements MouseMotionListener, MouseList
 	static JLabel instructions;
 	static JLabel credits;
 
+	private boolean startGame = false;
+
 	// constructor
 	public MenuScreen () {
 		setLayout(null);
@@ -68,6 +70,8 @@ public class MenuScreen extends JPanel implements MouseMotionListener, MouseList
 		setFocusable(true);
 		addMouseMotionListener(this);
 		addMouseListener(this);
+		
+		
 	}
 	
 
@@ -207,12 +211,6 @@ public class MenuScreen extends JPanel implements MouseMotionListener, MouseList
 	public void mouseClicked(MouseEvent e) {
 		if (inPlayButton){
 			Screen.changeScreen(Screen.GAME_CUSTOMIZER_SCREEN);
-		}
-		else if (inCreditsButton){
-			Screen.changeScreen(Screen.CREDIT_SCREEN);
-		}
-		else if (inInstructionButton){
-			Screen.changeScreen(Screen.INSTRUCTION_SCREEN);
 		}
 	}
 

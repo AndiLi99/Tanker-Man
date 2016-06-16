@@ -1,7 +1,6 @@
 package tankermanz;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -12,22 +11,23 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 public class Terrain extends JPanel implements KeyListener, MouseMotionListener, MouseListener{
 	static CopyOnWriteArrayList <Projectile> projectiles = new CopyOnWriteArrayList <Projectile>();
-	static CopyOnWriteArrayList <Tank> tanks = new CopyOnWriteArrayList <Tank>();
-
+	static ArrayList <Tank> tanks = new ArrayList <Tank>();
+	
 	static CopyOnWriteArrayList <SupplyPack> supplyPacks = new CopyOnWriteArrayList <SupplyPack>();
 	static CopyOnWriteArrayList <Explosion> explosions = new CopyOnWriteArrayList <Explosion>();
 
 	int [] landX;
 	int [] landY;
 	static Tank currentPlayer;
-	int gameMode;
 
 	static final double GRAVITY = 100.0;
 	static final double SECONDS = 1000.0;
@@ -35,12 +35,8 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 	static final int HEIGHT = 500;
 	static final double RADS = 0.01745329251;
 	static final int MINUMUM_GROUND_HEIGHT = 10;
-	static final int CIRCLE_DESTRUCTION = 0;
-	public static final int REFLECT_BARRIER_HEIGHT = 100;
-
 	static int numPlayers;
-	static String status;
-
+	
 	private boolean rotateLeft;
 	private boolean rotateRight;
 	private boolean increasePower;
@@ -50,91 +46,44 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 	static boolean changeWeaponRight;
 	static boolean changeWeaponLeft;
 	static boolean fire;
-
+	
 	private boolean released;
 	private boolean weaponFired;
-	private boolean win;
-	private boolean exit;
-
+	
+	
+	
+	
 	static int mouseX = 0;
 	static int mouseY = 0;
-
-	int backLabelLength = 120; int backLabelHeight = 50;
-	int backLabelX = 815; int backLabelY = 405;
-
-	boolean inBackButton = false;
-	final int TEXT_SIZE = 50;
-
-	JLabel credits; 
-	JLabel backButton;
-
+	
+	static final int CIRCLE_DESTRUCTION = 0;
+	public static final int REFLECT_BARRIER_HEIGHT = 100;
+	
 	// constructor
-	public Terrain (int mapNum, int numPlayers, int gameMode, int maxHealth, int maxFuel, int[] tankTeam, int[] tankTops, int[] tankTracks, int[] tankColor) {
+	public Terrain (int mapNum, int numPlayers, int gameMode) {
 
-		setBackButton();
-		add(backButton);
-
-		projectiles = new CopyOnWriteArrayList <Projectile>();
-		tanks = new CopyOnWriteArrayList <Tank>();
-
-		supplyPacks = new CopyOnWriteArrayList <SupplyPack>();
-		explosions = new CopyOnWriteArrayList <Explosion>();
-
-		this.gameMode = gameMode;
-		Tank.MAX_FUEL= maxFuel;
-		Tank.MAX_HEALTH = maxHealth;
-		status = "Ready to Fire";
+		
 		initialMap (mapNum);
 
 		Terrain.numPlayers = numPlayers;
 		released = true;
 		weaponFired = false;
-		fire = false;
-
-		for (int i = 0; i < tankTeam.length; i ++){
-			if (tankTeam[i]== 0 && i +1< numPlayers){
-				if (tankTeam [i+1] == 1)
-					tankTeam [i] = 2;
-				else if (tankTeam [i+1] == 1)
-					tankTeam [i] = 1;
-
-			}
-			else if (tankTeam[i]== 0 && i+1 == numPlayers){
-				if (tankTeam [0] == 1)
-					tankTeam [i] = 2;
-				else if (tankTeam [0] == 1)
-					tankTeam [i] = 1;
-
-			}
-
+		
+		for (int i = 0; i < Terrain.numPlayers; i++){
+			//(int xLocation, int playerID)
+			Tank tank = new Tank(this, (i+1)*100, i, i%2);
+			tank.dropTank();
+			tanks.add(tank);
 		}
-
-		if (this.gameMode == Constants.TEAM){
-			for (int i = 0; i < Terrain.numPlayers; i++){
-				if (tankTeam[i] == 0)
-					tankTeam[i] = (int)(Math.random()+0.5) + 1;
-
-				Tank tank = new Tank(this, (i+1)*100, i, tankTeam[i], tankTops[i], tankTracks[i], tankColor[i]);
-				tank.dropTank();
-				tanks.add(tank);
-			}
-		}
-
-		if (this.gameMode == Constants.FFA){
-			for (int i = 0; i < Terrain.numPlayers; i++){
-				Tank tank = new Tank(this, (i+1)*100, i, i, tankTops[i], tankTracks[i], tankColor[i]);
-				tank.dropTank();
-				tanks.add(tank);
-			}
-		}
+		
 		currentPlayer = tanks.get(0);
-
+		
 		addKeyListener(this);
 		setFocusable(true);
 		addMouseMotionListener(this);
 		addMouseListener(this);
 	}
-
+	
 
 
 	public Terrain(int startMap) {
@@ -306,7 +255,7 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 		landX[951] = 0;
 	}
 
-
+	
 	//max
 	public void terrainDestruction (int locationX, int power, int type) {
 		int yMid = landY[locationX];	// Middle of attack
@@ -319,8 +268,8 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 					a = 0;
 				if (a >= 950) // when array reaches over 1000, stop redrawing terrain
 					break;
-
-
+				
+				
 				else {
 					int yPos = yMid + (int)Math.sqrt(power*power - (a - locationX)*(a - locationX)); 
 					// Find y destruction value (creates downwards semicircle)
@@ -360,121 +309,121 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 	public static Tank getCurrentPlayer(){
 		return currentPlayer;
 	}
-
+	
 	public void fireProjectile (Tank t){
-
-
+		
+		
 		if (t.weapons[t.getCurrentWeapon()] != 0){
 			t.weapons[t.getCurrentWeapon()] --;
 			weaponFired = true;
-
-			System.out.println(Tank.weaponNames[t.getCurrentWeapon()] + "fired, left: "+t.weapons[t.getCurrentWeapon()]);
-
+			
+			System.out.println(Tank.weaponNames[t.getCurrentWeapon()] + "fired");
+			
 			if (t.getCurrentWeapon() == Projectile.BULLET_PROJECTILE){
-				projectiles.add (new BulletProjectile (this, t.x, t.y, t.getPower(), t.aimAngle));
+				projectiles.add (new BulletProjectile (this, t.x, t.y, t.power, t.aimAngle));
 				t.weapons[t.getCurrentWeapon()] ++;
 			}
-
+			
 			else if (t.getCurrentWeapon() == Projectile.BIG_BULLET_PROJECTILE){
-				projectiles.add (new BigBulletProjectile (this, t.x, t.y, t.getPower(), t.aimAngle));
+				projectiles.add (new BigBulletProjectile (this, t.x, t.y, t.power, t.aimAngle));
 			}
-
+			
 			else if (t.getCurrentWeapon() == Projectile.EXPLOSIVE_BULLET_PROJECTILE){
-				projectiles.add (new ExplosiveBulletProjectile (this, t.x, t.y, t.getPower(), t.aimAngle));
+				projectiles.add (new ExplosiveBulletProjectile (this, t.x, t.y, t.power, t.aimAngle));
 			}
-
+			
 			else if (t.getCurrentWeapon() == Projectile.SPRAY_PROJECTILE){
-				projectiles.add (new SprayProjectile (this, t.x, t.y, t.getPower()-5, t.aimAngle+1));
-				projectiles.add (new SprayProjectile (this, t.x, t.y, t.getPower()-5, t.aimAngle));
-				projectiles.add (new SprayProjectile (this, t.x, t.y, t.getPower()-15, t.aimAngle-3));
-				projectiles.add (new SprayProjectile (this, t.x, t.y, t.getPower()+15, t.aimAngle+3));
-				projectiles.add (new SprayProjectile (this, t.x, t.y, t.getPower()+15, t.aimAngle-4));
-				projectiles.add (new SprayProjectile (this, t.x, t.y, t.getPower()+15, t.aimAngle+4));
-				projectiles.add (new SprayProjectile (this, t.x, t.y, t.getPower()-5, t.aimAngle+4));
-				projectiles.add (new SprayProjectile (this, t.x, t.y, t.getPower()+5, t.aimAngle-4));
-				projectiles.add (new SprayProjectile (this, t.x, t.y, t.getPower()+5, t.aimAngle+3));
-				projectiles.add (new SprayProjectile (this, t.x, t.y, t.getPower()+5, t.aimAngle-3));
+				projectiles.add (new SprayProjectile (this, t.x, t.y, t.power-5, t.aimAngle+1));
+				projectiles.add (new SprayProjectile (this, t.x, t.y, t.power-5, t.aimAngle));
+				projectiles.add (new SprayProjectile (this, t.x, t.y, t.power-15, t.aimAngle-3));
+				projectiles.add (new SprayProjectile (this, t.x, t.y, t.power+15, t.aimAngle+3));
+				projectiles.add (new SprayProjectile (this, t.x, t.y, t.power+15, t.aimAngle-4));
+				projectiles.add (new SprayProjectile (this, t.x, t.y, t.power+15, t.aimAngle+4));
+				projectiles.add (new SprayProjectile (this, t.x, t.y, t.power-5, t.aimAngle+4));
+				projectiles.add (new SprayProjectile (this, t.x, t.y, t.power+5, t.aimAngle-4));
+				projectiles.add (new SprayProjectile (this, t.x, t.y, t.power+5, t.aimAngle+3));
+				projectiles.add (new SprayProjectile (this, t.x, t.y, t.power+5, t.aimAngle-3));
 			}
-
+			
 			else if (t.getCurrentWeapon() == Projectile.TRIPLE_SHOT_PROJECTILE){
-				projectiles.add (new TripleShotProjectile (this, t.x, t.y, t.getPower(), t.aimAngle));
-				projectiles.add (new TripleShotProjectile (this, t.x, t.y, t.getPower(), t.aimAngle - 5));
-				projectiles.add (new TripleShotProjectile (this, t.x, t.y, t.getPower(), t.aimAngle + 5));
+				projectiles.add (new TripleShotProjectile (this, t.x, t.y, t.power, t.aimAngle));
+				projectiles.add (new TripleShotProjectile (this, t.x, t.y, t.power, t.aimAngle - 5));
+				projectiles.add (new TripleShotProjectile (this, t.x, t.y, t.power, t.aimAngle + 5));
 			}
-
+			
 			else if (t.getCurrentWeapon() == Projectile.DOZEN_SHOT_PROJECTILE){
-				projectiles.add (new DozenShotProjectile (this, t.x, t.y, t.getPower(), t.aimAngle));
-				projectiles.add (new DozenShotProjectile (this, t.x, t.y, t.getPower(), t.aimAngle-1));
-				projectiles.add (new DozenShotProjectile (this, t.x, t.y, t.getPower(), t.aimAngle-2));
-				projectiles.add (new DozenShotProjectile (this, t.x, t.y, t.getPower(), t.aimAngle-3));
-				projectiles.add (new DozenShotProjectile (this, t.x, t.y, t.getPower(), t.aimAngle-4));
-				projectiles.add (new DozenShotProjectile (this, t.x, t.y, t.getPower(), t.aimAngle-5));
-				projectiles.add (new DozenShotProjectile (this, t.x, t.y, t.getPower(), t.aimAngle+1));
-				projectiles.add (new DozenShotProjectile (this, t.x, t.y, t.getPower(), t.aimAngle+2));
-				projectiles.add (new DozenShotProjectile (this, t.x, t.y, t.getPower(), t.aimAngle+3));
-				projectiles.add (new DozenShotProjectile (this, t.x, t.y, t.getPower(), t.aimAngle+4));
-				projectiles.add (new DozenShotProjectile (this, t.x, t.y, t.getPower(), t.aimAngle+5));
-				projectiles.add (new DozenShotProjectile (this, t.x, t.y, t.getPower(), t.aimAngle+6));
+				projectiles.add (new DozenShotProjectile (this, t.x, t.y, t.power, t.aimAngle));
+				projectiles.add (new DozenShotProjectile (this, t.x, t.y, t.power, t.aimAngle-1));
+				projectiles.add (new DozenShotProjectile (this, t.x, t.y, t.power, t.aimAngle-2));
+				projectiles.add (new DozenShotProjectile (this, t.x, t.y, t.power, t.aimAngle-3));
+				projectiles.add (new DozenShotProjectile (this, t.x, t.y, t.power, t.aimAngle-4));
+				projectiles.add (new DozenShotProjectile (this, t.x, t.y, t.power, t.aimAngle-5));
+				projectiles.add (new DozenShotProjectile (this, t.x, t.y, t.power, t.aimAngle+1));
+				projectiles.add (new DozenShotProjectile (this, t.x, t.y, t.power, t.aimAngle+2));
+				projectiles.add (new DozenShotProjectile (this, t.x, t.y, t.power, t.aimAngle+3));
+				projectiles.add (new DozenShotProjectile (this, t.x, t.y, t.power, t.aimAngle+4));
+				projectiles.add (new DozenShotProjectile (this, t.x, t.y, t.power, t.aimAngle+5));
+				projectiles.add (new DozenShotProjectile (this, t.x, t.y, t.power, t.aimAngle+6));
 			}
-
+			
 			else if (t.getCurrentWeapon() == Projectile.AIR_STRIKE_PROJECTILE){
-				projectiles.add (new AirStrikeSummonProjectile (this, t.x, t.y, t.getPower(), t.aimAngle));
+				projectiles.add (new AirStrikeSummonProjectile (this, t.x, t.y, t.power, t.aimAngle));
 			}
-
+		
 			else if (t.getCurrentWeapon() == Projectile.SPLITTER_PROJECTILE){
-				projectiles.add (new SplitterProjectile (this, t.x, t.y, t.getPower(), t.aimAngle, false));
+				projectiles.add (new SplitterProjectile (this, t.x, t.y, t.power, t.aimAngle, false));
 			}
-
+			
 			else if (t.getCurrentWeapon() == Projectile.BREAKER_PROJECTILE){
-				projectiles.add (new BreakerProjectile (this, t.x, t.y, t.getPower(), t.aimAngle, false));
+				projectiles.add (new BreakerProjectile (this, t.x, t.y, t.power, t.aimAngle, false));
 			}
-
+		
 			else if (t.getCurrentWeapon() == Projectile.TRACKER_PROJECTILE){
-				projectiles.add (new TrackerProjectile (this, t.x, t.y, t.getPower(), t.aimAngle));
+				projectiles.add (new TrackerProjectile (this, t.x, t.y, t.power, t.aimAngle));
 			}
-
+			
 			else if (t.getCurrentWeapon() == Projectile.HORIZON_PROJECTILE){
-				projectiles.add (new HorizonProjectile (this, t.x, t.y, t.getPower(), t.aimAngle));
+				projectiles.add (new HorizonProjectile (this, t.x, t.y, t.power, t.aimAngle));
 			}
-
+			
 			else if (t.getCurrentWeapon() == Projectile.FLOWER_PROJECTILE){
-				projectiles.add (new FlowerProjectile (this, t.x, t.y, t.getPower(), t.aimAngle));
+				projectiles.add (new FlowerProjectile (this, t.x, t.y, t.power, t.aimAngle));
 			}
-
+			
 			else if (t.getCurrentWeapon() == Projectile.STREAM_PROJECTILE){
-				projectiles.add (new StreamProjectile (this, t.x, t.y, t.getPower(), t.aimAngle, 0));
-				projectiles.add (new StreamProjectile (this, t.x, t.y, t.getPower(), t.aimAngle, 100));
-				projectiles.add (new StreamProjectile (this, t.x, t.y, t.getPower(), t.aimAngle, 200));
-				projectiles.add (new StreamProjectile (this, t.x, t.y, t.getPower(), t.aimAngle, 300));
-				projectiles.add (new StreamProjectile (this, t.x, t.y, t.getPower(), t.aimAngle, 400));
-				projectiles.add (new StreamProjectile (this, t.x, t.y, t.getPower(), t.aimAngle, 500));
-				projectiles.add (new StreamProjectile (this, t.x, t.y, t.getPower(), t.aimAngle, 600));
-				projectiles.add (new StreamProjectile (this, t.x, t.y, t.getPower(), t.aimAngle, 700));
-				projectiles.add (new StreamProjectile (this, t.x, t.y, t.getPower(), t.aimAngle, 800));
-				projectiles.add (new StreamProjectile (this, t.x, t.y, t.getPower(), t.aimAngle, 900));
-				projectiles.add (new StreamProjectile (this, t.x, t.y, t.getPower(), t.aimAngle, 1000));
+				projectiles.add (new StreamProjectile (this, t.x, t.y, t.power, t.aimAngle, 0));
+				projectiles.add (new StreamProjectile (this, t.x, t.y, t.power, t.aimAngle, 100));
+				projectiles.add (new StreamProjectile (this, t.x, t.y, t.power, t.aimAngle, 200));
+				projectiles.add (new StreamProjectile (this, t.x, t.y, t.power, t.aimAngle, 300));
+				projectiles.add (new StreamProjectile (this, t.x, t.y, t.power, t.aimAngle, 400));
+				projectiles.add (new StreamProjectile (this, t.x, t.y, t.power, t.aimAngle, 500));
+				projectiles.add (new StreamProjectile (this, t.x, t.y, t.power, t.aimAngle, 600));
+				projectiles.add (new StreamProjectile (this, t.x, t.y, t.power, t.aimAngle, 700));
+				projectiles.add (new StreamProjectile (this, t.x, t.y, t.power, t.aimAngle, 800));
+				projectiles.add (new StreamProjectile (this, t.x, t.y, t.power, t.aimAngle, 900));
+				projectiles.add (new StreamProjectile (this, t.x, t.y, t.power, t.aimAngle, 1000));
 			}
-
+			
 			else if (t.getCurrentWeapon() == Projectile.SNIPER_PROJECTILE){
-				projectiles.add (new SniperProjectile (this, t.x, t.y, t.getPower(), t.aimAngle));
+				projectiles.add (new SniperProjectile (this, t.x, t.y, t.power, t.aimAngle));
 			}
-
+			
 			else if (t.getCurrentWeapon() == Projectile.NUKE_PROJECTILE){
-				projectiles.add (new NukeProjectile (this, t.x, t.y, t.getPower(), t.aimAngle));
+				projectiles.add (new NukeProjectile (this, t.x, t.y, t.power, t.aimAngle));
 			}
-
+			
 			else if (t.getCurrentWeapon() == Projectile.ARMAGEDDON_PROJECTILE){
-				projectiles.add (new ArmageddonProjectile (this, t.x, t.y, t.getPower(), t.aimAngle));
+				projectiles.add (new ArmageddonProjectile (this, t.x, t.y, t.power, t.aimAngle));
 			}
-
+			
 			else if (t.getCurrentWeapon() == Projectile.FOUNTAIN_PROJECTILE){
-				projectiles.add (new FountainProjectile(this, t.x, t.y, t.getPower(), t.aimAngle, false));
+				projectiles.add (new FountainProjectile(this, t.x, t.y, t.power, t.aimAngle, false));
 			}
-
+			
 		}
-
+		
 	}
-
+	
 	public void checkForNextTurn(){
 		if (weaponFired && projectiles.size() == 0){
 			nextTurn();
@@ -485,7 +434,7 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 	public void moveProjectiles (int elapsedTime){
 		for (int i = projectiles.size()-1; i >= 0; i--){
 			Projectile p = projectiles.get(i);
-
+			
 			p.moveProjectile(elapsedTime);		
 
 
@@ -500,7 +449,7 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 			else if (p.isHit() || isTankHit(p)){
 				explodeProjectile(p, isTankHit(p));
 			}
-
+			
 			if (p.projectileID == Projectile.SPLITTER_PROJECTILE){
 				SplitterProjectile s = (SplitterProjectile) p;
 				if (s.y + 100 > getY ((int)s.x) && s.velocityY > 0 && s.split == false){
@@ -510,7 +459,7 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 					projectiles.remove(p);
 				}
 			}
-
+			
 			if (p.projectileID == Projectile.TRACKER_PROJECTILE){
 				TrackerProjectile s = (TrackerProjectile)p;
 				if (!s.activated){
@@ -521,64 +470,42 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 							s.activate();
 						}
 					}
-
+					
 				}
 			}
-
+			
 		}
 	}
 
-	public void nextTurn(){
-		status = currentPlayer.name + " dealt "+ currentPlayer.getDamageDealt() + " damage with " + Tank.weaponNames[currentPlayer.getCurrentWeapon()] ;
-		int indexOfDestroyedTank = tanks.indexOf(currentPlayer);
-		boolean win = true;
-
+	public void nextTurn (){
+		System.out.println("Player " + currentPlayer.name + " dealt "+ getCurrentPlayer().getDamageDealt() + " damage");
+		int index = tanks.indexOf(currentPlayer);
+		int tanksDestroyed = 0;
+		
 		for (int i = tanks.size() -1; i >= 0; i --){
 			if (tanks.get(i).destroyed){
 				tanks.remove(i);
+				tanksDestroyed ++;
 			}
 		}
-
-
-		if (tanks.size() > 0){
-			int team = tanks.get(0).team;
-			for (int i = tanks.size()-1; i >= 0; i--){
-				if (tanks.get(i).team != team){
-					win = false;
-				}
-			}
-
-			this.win = win;
-
-
-			int index = tanks.indexOf(currentPlayer);
-			if (index == -1)
-				index = indexOfDestroyedTank -1;
-
-			if (index + 1  == tanks.size()){
-				currentPlayer = tanks.get(0);
-			}
-			else {
-				currentPlayer = tanks.get(index+1 );
-			}
-			currentPlayer.setDamageDealt(0);
-			currentPlayer.setFuel(Tank.MAX_FUEL);
-			fire = false;
-			spawnSupplyPack();
+		
+		
+		if (index + 1 - tanksDestroyed == tanks.size()){
+			currentPlayer = tanks.get(0);
 		}
-		else
-			this.win = true;
-
-		if (win && gameMode == Constants.TEAM){
-			status = "Team " + (currentPlayer.team+1) + " has won!";
-		}
-		else if (win){
-			status = currentPlayer.name + " has won!";
+		else {
+			currentPlayer = tanks.get(index+1 - tanksDestroyed);
 		}
 
-
+		currentPlayer.setDamageDealt(0);
+		
+		System.out.println("It is " + currentPlayer.name + "'s turn");
+		
+		currentPlayer.setFuel(Tank.MAX_FUEL);
+		fire = false;
+		spawnSupplyPack();
 	}
-
+	
 	public boolean isTankHit(Projectile p){
 		for (Tank t: tanks){
 			if (distanceBetween(t.x, t.y, p.x, p.y) < Tank.HIT_RADIUS && t.playerID != currentPlayer.playerID){
@@ -587,8 +514,8 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 		}
 		return false;
 	}
-
-
+	
+	
 	public void moveTanks (int elapsedTime){
 		for (Tank t: tanks){
 			if (t.canMove()){
@@ -600,7 +527,7 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 					t.moveTank(elapsedTime, false);
 					System.out.println("trying to move right");		
 				}
-
+				
 				if (rotateLeft){
 					t.moveTankAngle(elapsedTime,false);
 					System.out.println("trying to rotate left");
@@ -608,24 +535,24 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 				else if (rotateRight){
 					t.moveTankAngle(elapsedTime, true);
 				}
-
+				
 				if (fire){
 					System.out.println("Weapon fired");
 					fireProjectile (t);
 				}
-
+				
 				if (increasePower){
 					//true means power is increased
-					t.changePower(elapsedTime, true);
-					System.out.println("Power = " + t.getPower());
+					t.changePower(true);
+					System.out.println("Power = " + t.power);
 				}
-
+				
 				else if (decreasePower){
 					// false means power is decreased
-					t.changePower(elapsedTime, false);
-					System.out.println("Power = " + t.getPower());
+					t.changePower(false);
+					System.out.println("Power = " + t.power);
 				}
-
+				
 				if (changeWeaponRight){
 					t.changeWeapon(true);
 					changeWeaponRight = false;
@@ -634,8 +561,8 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 					t.changeWeapon(false);
 					changeWeaponLeft = false;
 				}
-
-
+				
+				
 			}
 		}
 	}
@@ -658,9 +585,9 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 
 	public void spawnSupplyPack (){
 		int xLocation = (int)(Math.random()*Terrain.LENGTH);
-
-		supplyPacks.add (new SupplyPack (this, xLocation));
-
+		
+		supplyPacks.add (new SupplyPack (this, xLocation, 1, 10));
+		
 	}
 
 	//get Y value of terrain at a given x value
@@ -690,7 +617,7 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 			Explosion e = new Explosion (this, p);
 			explosions.add (e);
 		}
-
+		
 		else if (p.projectileID == Projectile.BREAKER_PROJECTILE){
 			BreakerProjectile b = (BreakerProjectile)p;
 
@@ -708,7 +635,7 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 			projectiles.add(new AirStrikeProjectile(this, p.x - 20, 10, 0, 0, 100));
 			projectiles.add(new AirStrikeProjectile(this, p.x + 20, 10, 0,0, 200));
 		}
-
+		
 		else if (p.projectileID == Projectile.HORIZON_PROJECTILE){
 			explosions.add (new Explosion (this, p, (int)p.x, (int)p.y));
 			explosions.add (new Explosion (this, p, (int)p.x+15, (int)p.y));
@@ -716,7 +643,7 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 			explosions.add (new Explosion (this, p, (int)p.x+30, (int)p.y));
 			explosions.add (new Explosion (this, p, (int)p.x-30, (int)p.y));
 		}
-
+		
 		else if (p.projectileID == Projectile.FLOWER_PROJECTILE){
 			explosions.add (new Explosion(this, p, (int)p.x + 30, (int)p.y));
 			explosions.add (new Explosion(this, p, (int)p.x - 30, (int)p.y));
@@ -727,55 +654,58 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 			explosions.add (new Explosion(this, p, (int)p.x -21, (int)p.y - 21));
 			explosions.add (new Explosion(this, p, (int)p.x -21, (int)p.y + 21));
 		}
-
+		
 		else if (p.projectileID == Projectile.FOUNTAIN_PROJECTILE){
 			FountainProjectile f = (FountainProjectile)p;
 			if (f.activated){
 				explosions.add (new Explosion (this, p));
 			}
 			else {
-				projectiles.add (new FountainProjectile(this, p.x, p.y, 60, 270, true));
-				projectiles.add (new FountainProjectile(this, p.x, p.y, 55, 271, true));
-				projectiles.add (new FountainProjectile(this, p.x, p.y, 55, 272, true));
-				projectiles.add (new FountainProjectile(this, p.x, p.y, 50, 269, true));
-				projectiles.add (new FountainProjectile(this, p.x, p.y, 52, 271, true));
-				projectiles.add (new FountainProjectile(this, p.x, p.y, 50, 266, true));
-				projectiles.add (new FountainProjectile(this, p.x, p.y, 45, 276, true));
-				projectiles.add (new FountainProjectile(this, p.x, p.y, 30, 265, true));
-				projectiles.add (new FountainProjectile(this, p.x, p.y, 50, 265, true));
-				projectiles.add (new FountainProjectile(this, p.x, p.y, 57, 274, true));
+				projectiles.add (new FountainProjectile(this, p.x, p.y, 150, 270, true));
+				projectiles.add (new FountainProjectile(this, p.x, p.y, 150, 271, true));
+				projectiles.add (new FountainProjectile(this, p.x, p.y, 150, 272, true));
+				projectiles.add (new FountainProjectile(this, p.x, p.y, 150, 273, true));
+				projectiles.add (new FountainProjectile(this, p.x, p.y, 150, 274, true));
+				projectiles.add (new FountainProjectile(this, p.x, p.y, 150, 266, true));
+				projectiles.add (new FountainProjectile(this, p.x, p.y, 150, 276, true));
+				projectiles.add (new FountainProjectile(this, p.x, p.y, 150, 255, true));
+				projectiles.add (new FountainProjectile(this, p.x, p.y, 150, 265, true));
+				projectiles.add (new FountainProjectile(this, p.x, p.y, 150, 274, true));
+				System.out.println("");
 			}
-
+			
 		}
+
+		
 		projectiles.remove(p);
 	}
 
 	public void incrementExplosions (int elapsedTime){
-
-
+		
+		
 		for (int i = explosions.size() - 1; i >= 0; i--){
 			Explosion e = explosions.get(i);
-
+			
 			if (e.hasNotDamaged()){
 				for (Tank aTank : tanks) {
 					aTank.dropTank();
 					if (distanceBetween (aTank.x, aTank.y, e.x, e.y) < e.radius+Tank.HIT_RADIUS){
 						aTank.dealDamage (e.damage);
 						System.out.println("Tank hit!");
-
-
+						
+						
 						if (aTank.team != getCurrentPlayer().team){
-							//add damage dealt to player
-							getCurrentPlayer().increaseDamageDealt(e.damage);
+						//add damage dealt to player
+						getCurrentPlayer().increaseDamageDealt(e.damage);
 						}
 						else
 							getCurrentPlayer().increaseDamageDealt(-e.damage);
 					}
 				}
 			}
-
+			
 			e.incrementTime(elapsedTime);
-
+			
 			if (e.shouldRemove())
 				explosions.remove(i);
 		}
@@ -798,10 +728,6 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 		return result;		
 	}
 
-	public int slope (double x){
-		return (int)((getY((int)x-4)-getY((int)x+4))/9.0);
-	}
-
 
 	public void paintComponent (Graphics g){
 		Graphics2D g2 = (Graphics2D) g;
@@ -821,10 +747,9 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 		}
 
 		//draws aimer
-		if (tanks.size() > 0){
-			DrawPowerAndAimer.drawPowerAndAimer(g, (int) getCurrentPlayer().x, (int) getCurrentPlayer().y,
-					getCurrentPlayer().aimAngle, getCurrentPlayer().getPower());
-		}
+		DrawPowerAndAimer.drawPowerAndAimer(g, (int) getCurrentPlayer().x, (int) getCurrentPlayer().y,
+				getCurrentPlayer().aimAngle, getCurrentPlayer().power);
+		
 		//draw tanks
 		for (Tank t: tanks){
 			int dy;
@@ -834,33 +759,27 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 			dy = getY((int)t.x + 2) - getY((int)t.x - 2) ;
 			angle = Math.atan(dy/4);
 			angle = angle/RADS;
-
-			if (gameMode == Constants.FFA){
-				if (t.tankColor == Constants.TANK_COLOR_GREEN) DrawTank.colorGreen();
-				else if (t.tankColor == Constants.TANK_COLOR_RED) DrawTank.colorRed();
-				else if (t.tankColor == Constants.TANK_COLOR_PINK) DrawTank.colorPink();
-				else if (t.tankColor == Constants.TANK_COLOR_BLUE) DrawTank.colorBlue();
-				DrawTank.drawCustomTank(g, (int)t.x, (int)t.y, Constants.IN_GAME_TANK_HEIGHT, (int)angle, (int)t.aimAngle, t.tankTops, t.tankTracks);
+			
+			if (t.team == 0){			
+			DrawTank.colorGreen();
+			DrawTank.drawDefaultTank(g, (int)t.x, (int)t.y, 15, (int)angle, (int)t.aimAngle);
 			}
-			else{
-				if (t.team == 1) DrawTank.colorGreen();
-				else if (t.team == 2) DrawTank.colorRed();
-				DrawTank.drawCustomTank(g, (int)t.x, (int)t.y, Constants.IN_GAME_TANK_HEIGHT, (int)angle, (int)t.aimAngle, t.tankTops, t.tankTracks);
-
+			else if (t.team == 1){
+				DrawTank.colorRed();
+				DrawTank.drawDefaultTank(g, (int)t.x, (int)t.y, 15, (int)angle, (int)t.aimAngle);
 			}
-
+					
 			g2.setTransform(resetForm);
 			//draws red background of hp bar
 			g2.setColor(Color.red);
-			g2.fillRect((int)t.x-Tank.HPLENGTH/2, (int)t.y-40, Tank.HPLENGTH, Tank.HPHEIGHT);	
-
+			g2.fillRect((int)t.x-Tank.HPLENGTH/2, (int)t.y-30, Tank.HPLENGTH, Tank.HPHEIGHT);	
+			
 			//draws green portion of hp bar
 			g2.setColor(Color.green);
-			g2.fillRect((int)t.x-Tank.HPLENGTH/2, (int)t.y-40, (int)(Tank.HPLENGTH*((double)t.health/(double)Tank.MAX_HEALTH)), Tank.HPHEIGHT);
-
-			DrawTank.drawTankInfo(g, (int)t.x, (int)t.y, (int)t.power, (int)(t.aimAngle), t.name);
+			g2.fillRect((int)t.x-Tank.HPLENGTH/2, (int)t.y-30, (int)(Tank.HPLENGTH*((double)t.health/(double)Tank.MAX_HEALTH)), Tank.HPHEIGHT);
 		}
-
+		
+		
 		g2.setTransform(resetForm);
 		g.setColor(Color.red);
 		for (Explosion e: explosions){
@@ -871,17 +790,10 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 		for (SupplyPack s: supplyPacks){
 			g.fillRect(s.x, (int)s.y,SupplyPack.WIDTH, SupplyPack.HEIGHT);
 		}
-
+		
 		g2.setTransform(resetForm);
-		if (tanks.size() > 0)
-			drawControl(g);
-
-
-		g.setColor(Color.WHITE);
-		g.drawString(getCurrentPlayer().name + "'s turn", Terrain.LENGTH/2 - 60, 30);	
-		g.drawString(status, Terrain.LENGTH/2-100, 50);
+		drawControl(g);
 	}
-
 
 	public void updateGame (int elapsedTime){
 		moveProjectiles (elapsedTime);
@@ -898,7 +810,7 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 		}
 		return false;
 	}
-
+	
 	public void keyPressed(KeyEvent e) {
 		if (tankCanMove()){
 			int key = e.getKeyCode();
@@ -935,13 +847,13 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 			if (key == KeyEvent.VK_SPACE){
 				fire = true;
 			}
-
+			
 			if (key == KeyEvent.VK_W && released){
 				changeWeaponRight = true;
 				released = false;
 			}
 
-
+			
 			if (key == KeyEvent.VK_S && released){
 				changeWeaponLeft = true;
 				released = false;
@@ -980,21 +892,21 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 		if (key == KeyEvent.VK_D){
 			moveRight = false;
 		}
-
+		
 		if (key == KeyEvent.VK_W){
 			changeWeaponRight = false;
 			released = true;
 		}
-
+		
 		if (key == KeyEvent.VK_S){
 			changeWeaponLeft = false;
 			released = true;
 		}
-
+		
 		if (key == KeyEvent.VK_SPACE){
 			fire = false;
 		}
-
+		
 	}
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub
@@ -1023,8 +935,6 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 			changeWeaponLeft = true;
 		else if (Control.inWeaponChangerRight)
 			changeWeaponRight = true;
-		else if (inBackButton)
-			exit = true;
 	}
 
 
@@ -1032,8 +942,6 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 		int mouseX = e.getX();
 		int mouseY = e.getY();
 		setMouseXY(mouseX, mouseY);
-		setInBackButton(mouseX, mouseY);
-		setColorBackButton();
 	}
 
 
@@ -1041,7 +949,7 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 		Control.drawBar(g);
 		Control.drawFireButton(g);
 		Control.drawHealthBox(g, getCurrentPlayer().health, Tank.MAX_HEALTH, getCurrentPlayer().team);
-		Control.drawFuelBox(g, (int)getCurrentPlayer().fuel, Tank.MAX_FUEL);
+		Control.drawFuelBox(g, getCurrentPlayer().fuel, Tank.MAX_FUEL);
 		Control.drawWeaponBox(g, mouseX, mouseY);
 	}
 
@@ -1055,50 +963,15 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 	public static int getMouseY () {
 		return mouseY;
 	}
-
+	
 	public int [] getLand (int mapNum) {
 		return landY;
 	}
 
 	public void mouseDragged(MouseEvent arg0) {
 		// TODO Auto-generated method stub
-
+		
 	}
 
-	public boolean getWin (){
-		return win;
-	}
 
-	public static void setStatus(String status){
-		Terrain.status = status;
-	}
-
-	public boolean getExit() {
-		return exit;
-	}
-
-	public void setBackButton () {
-		backButton = new JLabel("Back");
-		backButton.setFont(new Font("AR BERKLEY", Font.BOLD, TEXT_SIZE));
-		backButton.setForeground(new Color (2, 10, 33));
-		backButton.setSize(backLabelLength, backLabelHeight);
-		backButton.setLocation(backLabelX, backLabelY);
-	}
-
-	public void setColorBackButton () {
-		if (inBackButton)
-			backButton.setForeground(new Color (191, 208, 255));
-		else
-			backButton.setForeground(new Color (2, 10, 33));
-	}
-	public void setInBackButton (int mouseX, int mouseY) {
-		if (mouseX > backLabelX && mouseX < backLabelX + backLabelLength) {
-			if (mouseY > backLabelY && mouseY < backLabelY + backLabelHeight)
-				inBackButton = true;
-			else 
-				inBackButton = false;
-		}
-		else 
-			inBackButton = false;
-	}
 }

@@ -15,22 +15,21 @@ import javax.swing.JPanel;
 public class CreditsScreen extends JPanel implements MouseMotionListener, MouseListener {
 
 	int mouseX = 0; int mouseY = 0;
-	int tankX1 = 200; int tankY1 = 400;
-	int tankArmAngle1 = 330;
-	int tankX2 = 700; int tankY2 = 400;
-	int tankArmAngle2 = 190;
-	final int tankHeight = 60;
-	int tankAngle = 0;
-	
-	int creditLabelLength = 950;
-	int creditLabelHeight = 100;
-	int creditLabelX = 0;
-	int creditLabelY = 200;
 
-	int backLabelLength = 120;
-	int backLabelHeight = 50;
-	int backLabelX = 815;
-	int backLabelY = 405;
+	int tankX1 = 200; int tankY1 = 400;
+	int tankArmAngle1 = 30;
+
+	int tankX2 = 700; int tankY2 = 400;
+	int tankArmAngle2 = 305;
+
+	final int tankHeight = 90;
+	int tankAngle = 0;
+
+	int creditLabelLength = 950; int creditLabelHeight = 100;
+	int creditLabelX = 0; int creditLabelY = 200;
+
+	int backLabelLength = 120; int backLabelHeight = 50;
+	int backLabelX = 815; int backLabelY = 405;
 
 	boolean inBackButton = false;
 	final int TEXT_SIZE = 50;
@@ -72,7 +71,7 @@ public class CreditsScreen extends JPanel implements MouseMotionListener, MouseL
 		DrawTank.colorRed();
 		DrawTank.drawMountainTank(g, tankX2, tankY2, tankHeight, tankAngle, tankArmAngle2);
 		
-
+		setInBackButton(mouseX, mouseY); setColorBackButton();
 	}
 
 	public void setCreditLabels () {
@@ -118,7 +117,7 @@ public class CreditsScreen extends JPanel implements MouseMotionListener, MouseL
 
 	public void mouseReleased(MouseEvent e) {
 		if (inBackButton)
-			Screen.changeScreen(Screen.MENU_SCREEN);
+			System.out.println("going back");
 
 	}
 
@@ -130,8 +129,6 @@ public class CreditsScreen extends JPanel implements MouseMotionListener, MouseL
 	public void mouseMoved(MouseEvent e) {
 		int mouseX = e.getX(); int mouseY = e.getY();
 		setMouseXY(mouseX, mouseY);
-		setInBackButton(mouseX, mouseY);
-		setColorBackButton();
 	}
 
 	// Getters
