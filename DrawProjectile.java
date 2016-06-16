@@ -86,14 +86,6 @@ public class DrawProjectile {
 		g.fillOval(x-bigBulletRadius, y-bigBulletRadius, 2*bigBulletRadius, 2*bigBulletRadius);
 	}
 
-	private static void drawStickyBomb (Graphics g, int x, int y) {
-		int stickyBombRadius = 5;
-		Graphics2D g2 = (Graphics2D) g;
-		g2.setPaint(new GradientPaint(0, y + stickyBombRadius, new Color (127, 0, 0), 
-				0, y - stickyBombRadius, new Color (127, 72, 1)));
-		g.fillOval(x-stickyBombRadius, y-stickyBombRadius, 2*stickyBombRadius, 2*stickyBombRadius);
-	}
-
 	private static void drawSpray (Graphics g, int x, int y) {
 		int sprayRadius = 2;
 		Graphics2D g2 = (Graphics2D) g;

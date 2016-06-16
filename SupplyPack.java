@@ -1,7 +1,5 @@
 package tankermanz;
 
-import java.util.Random;
-
 //andi
 public class SupplyPack {
 	int x;
@@ -20,12 +18,15 @@ public class SupplyPack {
 		this.x = x;
 		y = SPAWNY;
 		
+		//pick a random number from 0-16
 		this.powerUpID = (int) (Math.random()*15)+1;
+		//pick a random number for ammo
 		this.ammo = (int)((Math.random())*10+0.5)+ 1;
 		this.terrain = terrain;
 	}
 	
 	public void moveSupplyPack (int elapsedTime){
+		//move down in constant velocity
 		y += dy*elapsedTime/Terrain.SECONDS;
 	}
 	

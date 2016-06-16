@@ -15,21 +15,22 @@ import javax.swing.JPanel;
 public class CreditsScreen extends JPanel implements MouseMotionListener, MouseListener {
 
 	int mouseX = 0; int mouseY = 0;
-
 	int tankX1 = 200; int tankY1 = 400;
 	int tankArmAngle1 = 330;
-
 	int tankX2 = 700; int tankY2 = 400;
 	int tankArmAngle2 = 190;
-
 	final int tankHeight = 60;
 	int tankAngle = 0;
+	
+	int creditLabelLength = 950;
+	int creditLabelHeight = 100;
+	int creditLabelX = 0;
+	int creditLabelY = 200;
 
-	int creditLabelLength = 950; int creditLabelHeight = 100;
-	int creditLabelX = 0; int creditLabelY = 200;
-
-	int backLabelLength = 120; int backLabelHeight = 50;
-	int backLabelX = 815; int backLabelY = 405;
+	int backLabelLength = 120;
+	int backLabelHeight = 50;
+	int backLabelX = 815;
+	int backLabelY = 405;
 
 	boolean inBackButton = false;
 	final int TEXT_SIZE = 50;

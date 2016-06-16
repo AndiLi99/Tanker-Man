@@ -58,8 +58,6 @@ public class MenuScreen extends JPanel implements MouseMotionListener, MouseList
 	static JLabel instructions;
 	static JLabel credits;
 
-	private boolean startGame = false;
-
 	// constructor
 	public MenuScreen () {
 		setLayout(null);

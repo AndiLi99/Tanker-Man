@@ -5,13 +5,11 @@ import java.awt.Font;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
@@ -643,7 +641,7 @@ public class GameCustomizer extends JPanel implements MouseMotionListener, Mouse
 			mapNum = mapNum%5 + 1;
 
 		// Check if user wants to start game
-		if (inStartGame) {
+		if (inStartGame && teamsBalanced()) {
 			Screen.startGame();
 			Screen.setMaxHealth(maxHP);
 			Screen.setMaxFuel(maxFuel);

@@ -3,8 +3,6 @@ package tankermanz;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Container;
-import java.awt.Graphics;
-import java.awt.GraphicsConfiguration;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 

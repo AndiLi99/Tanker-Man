@@ -7,12 +7,10 @@ public class Projectile {
 	double velocityY;
 	int projectileID;
 	int delay;
-	int radius = 3;
 	int damage = 10;
 	int explosion = 50 ;
 	Terrain terrain;
-	
-	
+		
 	static final int BULLET_PROJECTILE = 0;
 	static final int BIG_BULLET_PROJECTILE = 1;
 	static final int EXPLOSIVE_BULLET_PROJECTILE = 2;
@@ -31,50 +29,52 @@ public class Projectile {
 	static final int ARMAGEDDON_PROJECTILE = 15;
 	static final int FOUNTAIN_PROJECTILE = 16;
 	
-
 	public Projectile (Terrain terrain, double x, double y, int power, double angle){
 		this.x = x;
 		this.y = y - 5;
 		//power multiplier
 		power = power * 3;
+		//trignometry
 		this.velocityX = (int)(Math.cos(angle*Terrain.RADS)*power);
 		this.velocityY = (int)(Math.sin(angle*Terrain.RADS)*power);
+		//give each projectile a related terrain field
 		this.terrain = terrain;
 	}
 	
+	//constructor for projectiles not directly fired by tanks
 	public Projectile (Terrain terrain, double x, double y){
 		this.x = x;
 		this.y = y -5;
 		this.terrain = terrain;
 	}
-	
-	
-	//TODO FIX the y velocity, gravity make realistic shots
-	
+		
 	public void moveProjectile (int elapsedTime){
+		//make the projectile wait in place before moving to achieve effects
 		if (delay > 0){
 			delay -= elapsedTime;
 		}
 
 		else {
+			//speed up the projectiles movement
 			elapsedTime= (int)(elapsedTime*1.5);
+			//projectile moves in constant velocity in x-axis
 			this.x += velocityX * elapsedTime /Terrain.SECONDS;
-			//		this.y += (velocityY* elapsedTime /Terrain.SECONDS) - (Terrain.GRAVITY*elapsedTime*elapsedTime/(Terrain.SECONDS*Terrain.SECONDS));
+			//y-velocity decreases linearly over time
 			this.velocityY += Terrain.GRAVITY*elapsedTime/Terrain.SECONDS;
 			this.y += (velocityY* elapsedTime /Terrain.SECONDS);
-			System.out.println("y velocity" + this.velocityY);
-			System.out.println(this.y);
 		}
 	}
 	
 	public boolean isHit (){
-		if (this.y >= terrain.getY((int)x) && x != Terrain.LENGTH) 
+		//check if the ball is below the ground level
+		if (this.y >= terrain.getY((int)x) && x != Terrain.LENGTH) //!= Terrain.LENGTH bc of way we stored land
 			return true;
 		else
 			return false; 
 	}
 
 	public boolean deleteOnSide(){
+		//if the ball moves past the edge of screen
 		if (x < 0 || x > Terrain.LENGTH)
 			return true;
 		else
@@ -82,6 +82,7 @@ public class Projectile {
 	}
 
 	public boolean reflectOnSide() {
+		//just before the ball moves past edge of screen, if it is close enough to ground, should reflect
 		if (x < 5 && y > terrain.getY(0) - Terrain.REFLECT_BARRIER_HEIGHT){
 			return true;
 		}

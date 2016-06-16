@@ -1,10 +1,5 @@
 package tankermanz;
 
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-
-import javax.net.ssl.SSLEngineResult.Status;
-
 public class Tank {
 	double x;
 	double y;
