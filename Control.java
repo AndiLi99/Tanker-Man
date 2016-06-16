@@ -70,6 +70,9 @@ public class Control {
 		g2.setPaint(new GradientPaint(0, healthBoxY + distanceHpX + heightHp, new Color (2, 65, 0), 0, 
 				healthBoxY + distanceHpX, new Color (4, 105, 0)));
 		g.fillRect(healthBoxX + distanceHpX, healthBoxY + distanceHpY, hpLength, heightHp);
+		
+		g2.setPaint(new GradientPaint(0, healthBoxY + 5*boxHeight/6,  new Color (124, 203, 255), 0, healthBoxY + boxHeight, new Color (11, 50, 75)));
+		g.fillRect(healthBoxX, healthBoxY + 5*boxHeight/6, healthBoxLength, boxHeight/6);
 
 		// Write HP and Max HP on health bar
 		String strHP = Integer.toString(hp) + "/" + Integer.toString(maxHP);
@@ -79,14 +82,8 @@ public class Control {
 
 
 		// Tank 
-		if (team == 0) {
-			DrawTank.colorGreen();
-			DrawTank.drawCircleTank(g, healthBoxX + healthBoxLength/2, healthBoxY + boxHeight - 5, 20, 0, 315);
-		}
-		else {
-			DrawTank.colorRed();
-			DrawTank.drawMountainTank(g, healthBoxX + healthBoxLength/2, healthBoxY + boxHeight - 5, 20, 0, 315);
-		}
+		Tank t = Terrain.getCurrentPlayer();
+		DrawTank.drawCustomTank(g, healthBoxX + healthBoxLength/2, healthBoxY + 5*boxHeight/6, 25, 0, 335, t.tankTops, t.tankTracks);
 	}
 
 	public static void drawFuelBox (Graphics g, int fuel, int maxFuel) {

@@ -7,7 +7,7 @@ public class AirStrikeProjectile extends Projectile {
 		radius= 5;
 		damage = 25;
 		explosion = 25;
-		projectileID = 0;
+		projectileID = BULLET_PROJECTILE;
 		this.delay = delay;
 	}
 	

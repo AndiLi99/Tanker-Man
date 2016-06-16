@@ -70,8 +70,6 @@ public class MenuScreen extends JPanel implements MouseMotionListener, MouseList
 		setFocusable(true);
 		addMouseMotionListener(this);
 		addMouseListener(this);
-		
-		
 	}
 	
 
@@ -214,6 +212,9 @@ public class MenuScreen extends JPanel implements MouseMotionListener, MouseList
 		}
 		else if (inCreditsButton){
 			Screen.changeScreen(Screen.CREDIT_SCREEN);
+		}
+		else if (inInstructionButton){
+			Screen.changeScreen(Screen.INSTRUCTION_SCREEN);
 		}
 	}
 

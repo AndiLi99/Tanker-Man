@@ -12,7 +12,7 @@ import java.awt.event.MouseMotionListener;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-public class InstructionsScreen extends JPanel implements MouseMotionListener, MouseListener{
+public class VictoryScreen extends JPanel implements MouseMotionListener, MouseListener {
 	static final int tankX = 725; static final int tankY = 85;
 	static final int angleTank = 335;
 	static final int tankHeight = 18;
@@ -23,21 +23,21 @@ public class InstructionsScreen extends JPanel implements MouseMotionListener, M
 	final int TEXT_SIZE = 50;
 	boolean inBackButton = false;
 	JLabel backButton;
-	
-	public InstructionsScreen() {
+
+	public VictoryScreen (){
 		setLayout(null);
 
 		MenuScreen.setTitle();
 		add(MenuScreen.gameTitleTanker);
 		add(MenuScreen.gameTitleManz);
-		
+
 		setBackButton();
 		add(backButton);
-		
+
 		setFocusable(true);
 		addMouseMotionListener(this);
 		addMouseListener(this);
-	} 
+	}
 	public void paintComponent (Graphics g) {
 		Graphics2D g2 = (Graphics2D) g;
 
@@ -53,14 +53,8 @@ public class InstructionsScreen extends JPanel implements MouseMotionListener, M
 
 		g.setColor(Color.WHITE);
 		g.setFont(new Font ("serif", Font.PLAIN, 30));
-		g.drawString("AD - Move Tank", 150, 160);
-		g.drawString("WS - Change Weapon", 150, 190);
-		g.drawString("Left Right Arrows - Move Tank Arm", 150, 220);
-		g.drawString("Up Down Arrows - Change Power", 150, 250);
-		g.drawString("Space - Fire Weapon", 150, 280);
+		g.drawString(Screen.message, 100,200);
 	}
-	
-
 	public void setBackButton () {
 		backButton = new JLabel("Back");
 		backButton.setFont(new Font("AR BERKLEY", Font.BOLD, TEXT_SIZE));

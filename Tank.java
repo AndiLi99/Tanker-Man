@@ -3,6 +3,8 @@ package tankermanz;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+import javax.net.ssl.SSLEngineResult.Status;
+
 public class Tank {
 	double x;
 	double y;
@@ -65,6 +67,7 @@ public class Tank {
 	
 	public void pickUpSupplyPack(SupplyPack s){
 		weapons [s.powerUpID] += s.ammo;
+		Terrain.setStatus(name + " picked up " + s.ammo + " " + weaponNames [s.powerUpID] +"'s");
 	}
 	
 	public void changeWeapon(boolean right){

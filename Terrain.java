@@ -1,6 +1,7 @@
 package tankermanz;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 public class Terrain extends JPanel implements KeyListener, MouseMotionListener, MouseListener{
@@ -36,6 +38,9 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 	static final int HEIGHT = 500;
 	static final double RADS = 0.01745329251;
 	static final int MINUMUM_GROUND_HEIGHT = 10;
+	static final int CIRCLE_DESTRUCTION = 0;
+	public static final int REFLECT_BARRIER_HEIGHT = 100;
+	
 	static int numPlayers;
 	static String status;
 	
@@ -57,11 +62,27 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 	static int mouseX = 0;
 	static int mouseY = 0;
 	
-	static final int CIRCLE_DESTRUCTION = 0;
-	public static final int REFLECT_BARRIER_HEIGHT = 100;
+	int backLabelLength = 120; int backLabelHeight = 50;
+	int backLabelX = 815; int backLabelY = 405;
+
+	boolean inBackButton = false;
+	final int TEXT_SIZE = 50;
+
+	JLabel credits; 
+	JLabel backButton;
 	
 	// constructor
 	public Terrain (int mapNum, int numPlayers, int gameMode, int maxHealth, int maxFuel, int[] tankTeam, int[] tankTops, int[] tankTracks, int[] tankColor) {
+		
+		setBackButton();
+		add(backButton);
+		
+		projectiles = new CopyOnWriteArrayList <Projectile>();
+		tanks = new CopyOnWriteArrayList <Tank>();
+
+		supplyPacks = new CopyOnWriteArrayList <SupplyPack>();
+		explosions = new CopyOnWriteArrayList <Explosion>();
+		
 		this.gameMode = gameMode;
 		Tank.MAX_FUEL= maxFuel;
 		Tank.MAX_HEALTH = maxHealth;
@@ -71,11 +92,12 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 		Terrain.numPlayers = numPlayers;
 		released = true;
 		weaponFired = false;
+		fire = false;
 		
 		if (this.gameMode == Constants.TEAM){
 			for (int i = 0; i < Terrain.numPlayers; i++){
 				if (tankTeam[i] == 0)
-					tankTeam[i] = (int)(Math.random()+0.5);
+					tankTeam[i] = (int)(Math.random()+0.5) + 1;
 					
 				Tank tank = new Tank(this, (i+1)*100, i, tankTeam[i], tankTops[i], tankTracks[i], tankColor[i]);
 				tank.dropTank();
@@ -85,15 +107,13 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 		
 		if (this.gameMode == Constants.FFA){
 			for (int i = 0; i < Terrain.numPlayers; i++){
-				if (tankTeam[i] == 0)
-					tankTeam[i] = (int)(Math.random()+0.5);
 				Tank tank = new Tank(this, (i+1)*100, i, i, tankTops[i], tankTracks[i], tankColor[i]);
 				tank.dropTank();
 				tanks.add(tank);
 			}
 		}
 		currentPlayer = tanks.get(0);
-		
+
 		addKeyListener(this);
 		setFocusable(true);
 		addMouseMotionListener(this);
@@ -495,38 +515,44 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 
 	public void nextTurn(){
 		status = currentPlayer.name + " dealt "+ currentPlayer.getDamageDealt() + " damage with " + Tank.weaponNames[currentPlayer.getCurrentWeapon()] ;
-
+		int indexOfDestroyedTank = tanks.indexOf(currentPlayer);
 		boolean win = true;
-			
+	
 		for (int i = tanks.size() -1; i >= 0; i --){
 			if (tanks.get(i).destroyed){
 				tanks.remove(i);
 			}
 		}
-		
-		int team = tanks.get(0).team;
-		for (int i = tanks.size()-1; i >= 0; i--){
-			if (tanks.get(i).team != team){
-				win = false;
-			}
-		}
-		
-		this.win = win;
-		int index = tanks.indexOf(currentPlayer);
-		if (index + 1  == tanks.size()){
-			currentPlayer = tanks.get(0);
-		}
-		else {
-			currentPlayer = tanks.get(index+1 );
-		}
 
-		currentPlayer.setDamageDealt(0);
+
+		if (tanks.size() > 0){
+			int team = tanks.get(0).team;
+			for (int i = tanks.size()-1; i >= 0; i--){
+				if (tanks.get(i).team != team){
+					win = false;
+				}
+			}
 		
-		System.out.println("It is " + currentPlayer.name + "'s turn");
+			this.win = win;
+
 		
-		currentPlayer.setFuel(Tank.MAX_FUEL);
-		fire = false;
-		spawnSupplyPack();
+			int index = tanks.indexOf(currentPlayer);
+			if (index == -1)
+				index = indexOfDestroyedTank -1;
+			
+			if (index + 1  == tanks.size()){
+				currentPlayer = tanks.get(0);
+			}
+			else {
+				currentPlayer = tanks.get(index+1 );
+			}
+			currentPlayer.setDamageDealt(0);
+			currentPlayer.setFuel(Tank.MAX_FUEL);
+			fire = false;
+			spawnSupplyPack();
+		}
+		else
+			this.win = true;
 		
 		if (win && gameMode == Constants.TEAM){
 			status = "Team " + (currentPlayer.team+1) + " has won!";
@@ -534,9 +560,10 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 		else if (win){
 			status = currentPlayer.name + " has won!";
 		}
-				
+
+
 	}
-	
+
 	public boolean isTankHit(Projectile p){
 		for (Tank t: tanks){
 			if (distanceBetween(t.x, t.y, p.x, p.y) < Tank.HIT_RADIUS && t.playerID != currentPlayer.playerID){
@@ -617,7 +644,7 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 	public void spawnSupplyPack (){
 		int xLocation = (int)(Math.random()*Terrain.LENGTH);
 		
-		supplyPacks.add (new SupplyPack (this, xLocation, 1, 10));
+		supplyPacks.add (new SupplyPack (this, xLocation));
 		
 	}
 
@@ -794,32 +821,17 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 			angle = angle/RADS;
 			
 			if (gameMode == Constants.FFA){
-				if (t.tankColor == 0){			
-					DrawTank.colorGreen();
-					DrawTank.drawDefaultTank(g, (int)t.x, (int)t.y, 15, (int)angle, (int)t.aimAngle);
-				}
-				else if (t.tankColor == 1){
-					DrawTank.colorRed();
-					DrawTank.drawDefaultTank(g, (int)t.x, (int)t.y, 15, (int)angle, (int)t.aimAngle);
-				}
-				else if (t.tankColor == 2){
-					DrawTank.colorPink();
-					DrawTank.drawDefaultTank(g, (int)t.x, (int)t.y, 15, (int)angle, (int)t.aimAngle);
-				}
-				else if (t.tankColor == 3){
-					DrawTank.colorBlue();
-					DrawTank.drawDefaultTank(g, (int)t.x, (int)t.y, 15, (int)angle, (int)t.aimAngle);
-				}
+				if (t.tankColor == Constants.TANK_COLOR_GREEN) DrawTank.colorGreen();
+				else if (t.tankColor == Constants.TANK_COLOR_RED) DrawTank.colorRed();
+				else if (t.tankColor == Constants.TANK_COLOR_PINK) DrawTank.colorPink();
+				else if (t.tankColor == Constants.TANK_COLOR_BLUE) DrawTank.colorBlue();
+				DrawTank.drawCustomTank(g, (int)t.x, (int)t.y, Constants.IN_GAME_TANK_HEIGHT, (int)angle, (int)t.aimAngle, t.tankTops, t.tankTracks);
 			}
 			else{
-				if (t.team == 1){			
-					DrawTank.colorGreen();
-					DrawTank.drawDefaultTank(g, (int)t.x, (int)t.y, 15, (int)angle, (int)t.aimAngle);
-				}
-				else if (t.team == 2){
-					DrawTank.colorRed();
-					DrawTank.drawDefaultTank(g, (int)t.x, (int)t.y, 15, (int)angle, (int)t.aimAngle);
-				}
+				if (t.team == 1) DrawTank.colorGreen();
+				else if (t.team == 2) DrawTank.colorRed();
+				DrawTank.drawCustomTank(g, (int)t.x, (int)t.y, Constants.IN_GAME_TANK_HEIGHT, (int)angle, (int)t.aimAngle, t.tankTops, t.tankTracks);
+			
 			}
 					
 			g2.setTransform(resetForm);
@@ -994,6 +1006,8 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 			changeWeaponLeft = true;
 		else if (Control.inWeaponChangerRight)
 			changeWeaponRight = true;
+		else if (inBackButton)
+			exit = true;
 	}
 
 
@@ -1001,6 +1015,8 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 		int mouseX = e.getX();
 		int mouseY = e.getY();
 		setMouseXY(mouseX, mouseY);
+		setInBackButton(mouseX, mouseY);
+		setColorBackButton();
 	}
 
 
@@ -1036,11 +1052,36 @@ public class Terrain extends JPanel implements KeyListener, MouseMotionListener,
 		return win;
 	}
 
-
-
-	public boolean getExit() {
-		// TODO Auto-generated method stub
-		return exit;
+	public static void setStatus(String status){
+		Terrain.status = status;
 	}
 
+	public boolean getExit() {
+		return exit;
+	}
+	
+	public void setBackButton () {
+		backButton = new JLabel("Back");
+		backButton.setFont(new Font("AR BERKLEY", Font.BOLD, TEXT_SIZE));
+		backButton.setForeground(new Color (2, 10, 33));
+		backButton.setSize(backLabelLength, backLabelHeight);
+		backButton.setLocation(backLabelX, backLabelY);
+	}
+
+	public void setColorBackButton () {
+		if (inBackButton)
+			backButton.setForeground(new Color (191, 208, 255));
+		else
+			backButton.setForeground(new Color (2, 10, 33));
+	}
+	public void setInBackButton (int mouseX, int mouseY) {
+		if (mouseX > backLabelX && mouseX < backLabelX + backLabelLength) {
+			if (mouseY > backLabelY && mouseY < backLabelY + backLabelHeight)
+				inBackButton = true;
+			else 
+				inBackButton = false;
+		}
+		else 
+			inBackButton = false;
+	}
 }

@@ -1,5 +1,7 @@
 package tankermanz;
 
+import java.util.Random;
+
 //andi
 public class SupplyPack {
 	int x;
@@ -14,11 +16,12 @@ public class SupplyPack {
 	static final int RADIUS = 30;
 	static final int SPAWNY = 30;
 	
-	public SupplyPack (Terrain terrain, int x, int powerUpID, int ammo){
+	public SupplyPack (Terrain terrain, int x){
 		this.x = x;
 		y = SPAWNY;
-		this.powerUpID = powerUpID;
-		this.ammo = ammo;
+		
+		this.powerUpID = (int) (Math.random()*15)+1;
+		this.ammo = (int)((Math.random())*10+0.5)+ 1;
 		this.terrain = terrain;
 	}
 	
