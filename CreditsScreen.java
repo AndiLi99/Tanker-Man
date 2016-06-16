@@ -2,34 +2,39 @@ package tankermanz;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.FontFormatException;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GraphicsEnvironment;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.io.File;
+import java.io.IOException;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 public class CreditsScreen extends JPanel implements MouseMotionListener, MouseListener {
-
+	Font ARBERKLEY;
 	int mouseX = 0; int mouseY = 0;
-
 	int tankX1 = 200; int tankY1 = 400;
-	int tankArmAngle1 = 30;
-
+	int tankArmAngle1 = 330;
 	int tankX2 = 700; int tankY2 = 400;
-	int tankArmAngle2 = 305;
-
-	final int tankHeight = 90;
+	int tankArmAngle2 = 190;
+	final int tankHeight = 60;
 	int tankAngle = 0;
+	
+	int creditLabelLength = 950;
+	int creditLabelHeight = 100;
+	int creditLabelX = 0;
+	int creditLabelY = 200;
 
-	int creditLabelLength = 950; int creditLabelHeight = 100;
-	int creditLabelX = 0; int creditLabelY = 200;
-
-	int backLabelLength = 120; int backLabelHeight = 50;
-	int backLabelX = 815; int backLabelY = 405;
+	int backLabelLength = 120;
+	int backLabelHeight = 50;
+	int backLabelX = 815;
+	int backLabelY = 405;
 
 	boolean inBackButton = false;
 	final int TEXT_SIZE = 50;
@@ -38,6 +43,19 @@ public class CreditsScreen extends JPanel implements MouseMotionListener, MouseL
 	JLabel backButton;
 
 	public CreditsScreen () {
+		try {
+			ARBERKLEY = Font.createFont(Font.TRUETYPE_FONT, new File ("ARBERKLEY.ttf"));
+			GraphicsEnvironment ge = 
+					GraphicsEnvironment.getLocalGraphicsEnvironment();
+			ge.registerFont(ARBERKLEY);
+		} catch (FontFormatException e) {
+			System.out.println("no font found");
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		setLayout(null);
 		MenuScreen.setTitle(); add(MenuScreen.gameTitleTanker); add(MenuScreen.gameTitleManz);
 
@@ -71,7 +89,7 @@ public class CreditsScreen extends JPanel implements MouseMotionListener, MouseL
 		DrawTank.colorRed();
 		DrawTank.drawMountainTank(g, tankX2, tankY2, tankHeight, tankAngle, tankArmAngle2);
 		
-		setInBackButton(mouseX, mouseY); setColorBackButton();
+
 	}
 
 	public void setCreditLabels () {
@@ -117,7 +135,7 @@ public class CreditsScreen extends JPanel implements MouseMotionListener, MouseL
 
 	public void mouseReleased(MouseEvent e) {
 		if (inBackButton)
-			System.out.println("going back");
+			Screen.changeScreen(Screen.MENU_SCREEN);
 
 	}
 
@@ -129,6 +147,8 @@ public class CreditsScreen extends JPanel implements MouseMotionListener, MouseL
 	public void mouseMoved(MouseEvent e) {
 		int mouseX = e.getX(); int mouseY = e.getY();
 		setMouseXY(mouseX, mouseY);
+		setInBackButton(mouseX, mouseY);
+		setColorBackButton();
 	}
 
 	// Getters

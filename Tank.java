@@ -1,14 +1,11 @@
 package tankermanz;
 
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-
 public class Tank {
 	double x;
 	double y;
-	int fuel;
+	double fuel;
 	double aimAngle;
-	int power;
+	double power;
 	String name;
 	int health;
 	int [] weapons;
@@ -20,35 +17,43 @@ public class Tank {
 	int damageDealt;
 	int totalDamageDealt;
 	boolean destroyed;
-	int tankTop;
-	int tankBottom;
+	int tankTops;
+	int tankTracks;
 	Terrain terrain;
+	int tankColor;
 	
 	//how fast the tank can move
 	static final double SPEED = 35.0;
+	static final double POWER_SPEED = 100.0;
 	static final double CANNONSPEED = 50.0;
 	static final int LENGTH = 20;
 	static final int HEIGHT = 10;
 	static final int HPLENGTH = 25;
 	static final int HPHEIGHT = 5;
-	public static final int MAX_FUEL = 100;
+	public static int MAX_FUEL = 100;
 	public static final int MAX_POWER = 300;
-	public static final int MAX_HEALTH = 300;
+	public static int MAX_HEALTH = 300;
 	public static final double HIT_RADIUS = 15;
+	static final int MAX_SLOPE = 6;
 	
-	public Tank (Terrain terrain, int x, int playerID, int team){
+	public Tank (Terrain terrain, int x, int playerID, int team, int tankTops, int tankTracks, int tankColor){
 		fuel = MAX_FUEL;
 		aimAngle = 0;
-		power = 300;
+		power = 100;
 		health = MAX_HEALTH;
 		this.x = x;
 		this.y = terrain.getY(x);
-		weapons = new int [] {-1, 2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17};
+		weapons = new int [] {-1, 2,2,2,3,3,2,2,1,1,2,1,1,1,1,1,1};
 		this.playerID = playerID;
 		currentWeapon = 0;
 		this.team = team;
 		this.terrain = terrain;
+		this.tankTops = tankTops;
+		this.tankTracks = tankTracks;
+		this.tankColor = tankColor;
 		
+		
+		name = "Player " + String.valueOf(playerID + 1);
 	}
 	
 	public int getCurrentWeapon(){
@@ -57,6 +62,7 @@ public class Tank {
 	
 	public void pickUpSupplyPack(SupplyPack s){
 		weapons [s.powerUpID] += s.ammo;
+		Terrain.setStatus(name + " picked up " + s.ammo + " " + weaponNames [s.powerUpID] +"'s");
 	}
 	
 	public void changeWeapon(boolean right){
@@ -107,7 +113,7 @@ public class Tank {
 	}
 	
 	private boolean canMoveLeft(){
-		if (this.x - LENGTH/2 > 0){
+		if (x - LENGTH/2 > 0 && fuel > 0 && terrain.slope(x-1) > -1*MAX_SLOPE){
 			return true;
 		}
 		else
@@ -115,7 +121,7 @@ public class Tank {
 	}
 	
 	private boolean canMoveRight(){
-		if (this.x + LENGTH/2 < Terrain.LENGTH){
+		if (this.x + LENGTH/2 < Terrain.LENGTH && fuel > 0 && terrain.slope(x+1) < MAX_SLOPE){
 			return true;
 		}
 		else
@@ -124,23 +130,25 @@ public class Tank {
 
 	public void moveTank (int elapsedTime, boolean left){
 		dropTank();
-		fuel -= SPEED * elapsedTime/Terrain.SECONDS;
+		
 		if (left && canMoveLeft()){
 			x -= SPEED*elapsedTime/Terrain.SECONDS;
+			fuel -= (SPEED * 0.5* elapsedTime)/Terrain.SECONDS;
 		}
 		else if (!left && canMoveRight()){
 			x += SPEED*elapsedTime/Terrain.SECONDS;
+			fuel -= (SPEED * 0.5* elapsedTime)/Terrain.SECONDS;
 		}
 		System.out.println("fuel: "+ fuel);
 
 	}
 
-	public void changePower (boolean increase){
-		if (increase){
-			power+= 1;
+	public void changePower (int elapsedTime, boolean increase){
+		if (increase && power < 100){
+			power+= POWER_SPEED* elapsedTime/Terrain.SECONDS;
 		}
-		else
-			power -=1;
+		else if (!increase && power > 0)
+			power-= POWER_SPEED* elapsedTime/Terrain.SECONDS;
 	}
 
 	public void setFuel(int fuel) {
@@ -148,8 +156,11 @@ public class Tank {
 	}
 
 	public int getCurrentWeaponAmmo() {
-		
 		return weapons[currentWeapon];
+	}
+	
+	public int getPower (){
+		return (int)power;
 	}
 
 	public void setDamageDealt(int damageDealt) {
@@ -173,9 +184,5 @@ public class Tank {
 		else
 			health -= damage;
 	}
-
-
-
-
 }
 

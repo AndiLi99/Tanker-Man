@@ -2,19 +2,25 @@ package tankermanz;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.FontFormatException;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GraphicsEnvironment;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.AffineTransform;
+import java.io.File;
+import java.io.IOException;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 //max
 public class MenuScreen extends JPanel implements MouseMotionListener, MouseListener {
+	Font ARBERKLEY;
+	
 	// Mouse X and Y coordinates
 	static int mouseX = 0; static int mouseY = 0;
 
@@ -58,10 +64,20 @@ public class MenuScreen extends JPanel implements MouseMotionListener, MouseList
 	static JLabel instructions;
 	static JLabel credits;
 
-	private boolean startGame = false;
-
 	// constructor
 	public MenuScreen () {
+		try {
+			ARBERKLEY = Font.createFont(Font.TRUETYPE_FONT, new File ("ARBERKLEY.ttf"));
+			GraphicsEnvironment ge = 
+					GraphicsEnvironment.getLocalGraphicsEnvironment();
+			ge.registerFont(ARBERKLEY);
+		} catch (FontFormatException e) {
+			System.out.println("no font found");
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		setLayout(null);
 		
 		setTitle(); add(gameTitleTanker); add(gameTitleManz);
@@ -70,8 +86,6 @@ public class MenuScreen extends JPanel implements MouseMotionListener, MouseList
 		setFocusable(true);
 		addMouseMotionListener(this);
 		addMouseListener(this);
-		
-		
 	}
 	
 
@@ -211,6 +225,12 @@ public class MenuScreen extends JPanel implements MouseMotionListener, MouseList
 	public void mouseClicked(MouseEvent e) {
 		if (inPlayButton){
 			Screen.changeScreen(Screen.GAME_CUSTOMIZER_SCREEN);
+		}
+		else if (inCreditsButton){
+			Screen.changeScreen(Screen.CREDIT_SCREEN);
+		}
+		else if (inInstructionButton){
+			Screen.changeScreen(Screen.INSTRUCTION_SCREEN);
 		}
 	}
 

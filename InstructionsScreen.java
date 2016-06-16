@@ -2,17 +2,23 @@ package tankermanz;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.FontFormatException;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GraphicsEnvironment;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.io.File;
+import java.io.IOException;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 public class InstructionsScreen extends JPanel implements MouseMotionListener, MouseListener{
+	Font ARBERKLEY;
+	
 	static final int tankX = 725; static final int tankY = 85;
 	static final int angleTank = 335;
 	static final int tankHeight = 18;
@@ -25,6 +31,19 @@ public class InstructionsScreen extends JPanel implements MouseMotionListener, M
 	JLabel backButton;
 	
 	public InstructionsScreen() {
+		try {
+			ARBERKLEY = Font.createFont(Font.TRUETYPE_FONT, new File ("ARBERKLEY.ttf"));
+			GraphicsEnvironment ge = 
+					GraphicsEnvironment.getLocalGraphicsEnvironment();
+			ge.registerFont(ARBERKLEY);
+		} catch (FontFormatException e) {
+			System.out.println("no font found");
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		setLayout(null);
 
 		MenuScreen.setTitle();
@@ -52,12 +71,13 @@ public class InstructionsScreen extends JPanel implements MouseMotionListener, M
 		DrawTank.drawDefaultTank(g2, tankX, tankY, tankHeight, angleTank, tankArmAngle);
 
 		g.setColor(Color.WHITE);
-		g.setFont(new Font ("serif", Font.PLAIN, 30));
-		g.drawString("AD - Move Tank", 150, 160);
-		g.drawString("WS - Change Weapon", 150, 190);
-		g.drawString("Left Right Arrows - Move Tank Arm", 150, 220);
-		g.drawString("Up Down Arrows - Change Power", 150, 250);
-		g.drawString("Space - Fire Weapon", 150, 280);
+		g.setFont(new Font ("AR BERKLEY", Font.PLAIN, 40));
+		g.setColor(new Color (0, 105, 149));
+		g.drawString("A,D - Move Tank", 160, 180);
+		g.drawString("W,S - Change Weapon", 160, 230);
+		g.drawString("Left Right Arrows - Move Tank Arm", 160, 280);
+		g.drawString("Up Down Arrows - Change Power", 160, 330);
+		g.drawString("Space - Fire Weapon", 160, 380);
 	}
 	
 

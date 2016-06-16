@@ -4,8 +4,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.Timer;
 
 public class GameScreen extends JFrame {
@@ -17,17 +15,17 @@ public class GameScreen extends JFrame {
 	 *  #5 - Empire
 	 */
 	static Terrain terrain;
-	static int startMap = 3;
+	static int startMap;
 	static final int DELAY = 5;
 	static Timer animationTimer;
+	static String message;
 	
-	public GameScreen (int startMap, int numPlayers, int gameMode){
-						
+	public GameScreen (int startMap, int numPlayers, int gameMode, int maxHealth, int maxFuel, int[] tankTeam, int[] tankTops, int[] tankTracks, int[] tankColor){
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setSize(Terrain.LENGTH,Terrain.HEIGHT);
 		this.setResizable (false);
 		
-		terrain = new Terrain(startMap,numPlayers, gameMode);
+		terrain = new Terrain(startMap,numPlayers, gameMode, maxHealth, maxFuel, tankTeam, tankTops, tankTracks, tankColor);
 		this.add(terrain);
 		
 		animationTimer = new Timer(DELAY, animate);
@@ -35,7 +33,24 @@ public class GameScreen extends JFrame {
 		this.setVisible(true);
 
 		gameLoop();
-				
+		
+		if (terrain.getWin()){
+		Screen.changeScreen(Screen.VICTORY_SCREEN);
+		if (Terrain.getCurrentPlayer() == null)
+			message = "It's A Tie!";
+		else if (terrain.gameMode == Constants.FFA)
+			message = Terrain.getCurrentPlayer().name + " Wins!";
+		else if (terrain.gameMode == Constants.TEAM && Terrain.getCurrentPlayer().team == 2)
+			message = "Red Team Wins!";
+		else if (terrain.gameMode == Constants.TEAM && Terrain.getCurrentPlayer().team == 1)
+			message = "Green Team Wins!";	
+		Screen.victory(message);
+		}
+		else{
+			Screen.changeScreen(Screen.MENU_SCREEN);
+		}
+		Screen.frame.setVisible(true);
+		this.dispose();
 	}
 	
 	public static void gameLoop(){
@@ -43,7 +58,7 @@ public class GameScreen extends JFrame {
 		long currTime = startTime;
 //		System.out.println("before while");
 		
-		while (true) {
+		while (!terrain.getWin() && !terrain.getExit()) {
 			int elapsedTime = (int)(System.currentTimeMillis() - currTime);
 			currTime = System.currentTimeMillis();
 //			System.out.println("before terrain update");

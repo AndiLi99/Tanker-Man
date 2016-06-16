@@ -2,17 +2,22 @@ package tankermanz;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.FontFormatException;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GraphicsEnvironment;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.io.File;
+import java.io.IOException;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 public class VictoryScreen extends JPanel implements MouseMotionListener, MouseListener {
+	Font ARBERKLEY;
 	static final int tankX = 725; static final int tankY = 85;
 	static final int angleTank = 335;
 	static final int tankHeight = 18;
@@ -25,6 +30,19 @@ public class VictoryScreen extends JPanel implements MouseMotionListener, MouseL
 	JLabel backButton;
 
 	public VictoryScreen (){
+		try {
+			ARBERKLEY = Font.createFont(Font.TRUETYPE_FONT, new File ("ARBERKLEY.ttf"));
+			GraphicsEnvironment ge = 
+					GraphicsEnvironment.getLocalGraphicsEnvironment();
+			ge.registerFont(ARBERKLEY);
+		} catch (FontFormatException e) {
+			System.out.println("no font found");
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		setLayout(null);
 
 		MenuScreen.setTitle();

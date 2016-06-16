@@ -28,8 +28,8 @@ public class ColorSelector {
 	public boolean getMouseIsIn () { return mouseIsIn; }
 	
 	public void setMouseIsIn (int mouseX, int mouseY) {
-		if (mouseX > X && mouseX < X + length) {
-			if (mouseY > Y && mouseY < Y + height) mouseIsIn = true;
+		if (mouseX >= X && mouseX <= X + length) {
+			if (mouseY >= Y && mouseY <= Y + height) mouseIsIn = true;
 			else mouseIsIn = false;
 		}
 		else mouseIsIn = false;

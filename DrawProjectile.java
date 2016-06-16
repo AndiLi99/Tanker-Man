@@ -58,6 +58,8 @@ public class DrawProjectile {
 			drawNuke(g, x, y);
 		else if (projectileID == Projectile.ARMAGEDDON_PROJECTILE)
 			drawArmgeddon(g, x, y);
+		else if (projectileID == Projectile.FOUNTAIN_PROJECTILE)
+			drawFountain(g, x, y);
 	}
 
 	private static void drawTracker(Graphics g, int x, int y) {
@@ -82,14 +84,6 @@ public class DrawProjectile {
 		g2.setPaint(new GradientPaint(0, y + bigBulletRadius, new Color (53, 53, 53), 
 				0, y - bigBulletRadius, new Color (125, 125, 125)));
 		g.fillOval(x-bigBulletRadius, y-bigBulletRadius, 2*bigBulletRadius, 2*bigBulletRadius);
-	}
-
-	private static void drawStickyBomb (Graphics g, int x, int y) {
-		int stickyBombRadius = 5;
-		Graphics2D g2 = (Graphics2D) g;
-		g2.setPaint(new GradientPaint(0, y + stickyBombRadius, new Color (127, 0, 0), 
-				0, y - stickyBombRadius, new Color (127, 72, 1)));
-		g.fillOval(x-stickyBombRadius, y-stickyBombRadius, 2*stickyBombRadius, 2*stickyBombRadius);
 	}
 
 	private static void drawSpray (Graphics g, int x, int y) {
@@ -173,9 +167,18 @@ public class DrawProjectile {
 		Graphics2D g2 = (Graphics2D) g;
 		g2.setPaint(new GradientPaint(0, y + streamRadius, new Color (43, 0, 255), 
 				0, y - streamRadius, new Color (0, 196, 255)));
+		g.fillOval(x-streamRadius, y-streamRadius, 2*streamRadius, 2*streamRadius);	
+	}
+	
+	private static void drawFountain(Graphics g, int x, int y) {
+		int streamRadius = 3;
+		Graphics2D g2 = (Graphics2D) g;
+		g2.setPaint(new GradientPaint(0, y + streamRadius, new Color (43, 0, 255), 
+				0, y - streamRadius, new Color (0, 196, 255)));
 		g.fillOval(x-streamRadius, y-streamRadius, 2*streamRadius, 2*streamRadius);
 		
 	}
+	
 	private static void drawSniper (Graphics g, int x, int y) {
 		int sniperRadius = 1;
 		g.setColor(Color.white);
