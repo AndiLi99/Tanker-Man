@@ -19,63 +19,57 @@ public class GameScreen extends JFrame {
 	static final int DELAY = 5;
 	static Timer animationTimer;
 	static String message;
-	
+
 	public GameScreen (int startMap, int numPlayers, int gameMode, int maxHealth, int maxFuel, int[] tankTeam, int[] tankTops, int[] tankTracks, int[] tankColor){
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setSize(Terrain.LENGTH,Terrain.HEIGHT);
 		this.setResizable (false);
-		
+
 		terrain = new Terrain(startMap,numPlayers, gameMode, maxHealth, maxFuel, tankTeam, tankTops, tankTracks, tankColor);
 		this.add(terrain);
-		
+
 		animationTimer = new Timer(DELAY, animate);
 		animationTimer.start();
 		this.setVisible(true);
 
 		gameLoop();
-		
+
 		if (terrain.getWin()){
-		Screen.changeScreen(Screen.VICTORY_SCREEN);
-		if (Terrain.getCurrentPlayer() == null)
-			message = "It's A Tie!";
-		else if (terrain.gameMode == Constants.FFA)
-			message = Terrain.getCurrentPlayer().name + " Wins!";
-		else if (terrain.gameMode == Constants.TEAM && Terrain.getCurrentPlayer().team == 2)
-			message = "Red Team Wins!";
-		else if (terrain.gameMode == Constants.TEAM && Terrain.getCurrentPlayer().team == 1)
-			message = "Green Team Wins!";	
-		Screen.victory(message);
+			Screen.changeScreen(Screen.VICTORY_SCREEN);
+
+			if (Terrain.getCurrentPlayer() == null) message = "It's A Tie!";
+			else if (terrain.gameMode == Constants.FFA) message = Terrain.getCurrentPlayer().name + " Wins!";
+			else if (terrain.gameMode == Constants.TEAM && Terrain.getCurrentPlayer().team == 2)
+				message = "Green Team Wins!";
+			else if (terrain.gameMode == Constants.TEAM && Terrain.getCurrentPlayer().team == 1)
+				message = "Red Team Wins!";	
+			Screen.victory(message);
 		}
-		else{
-			Screen.changeScreen(Screen.MENU_SCREEN);
-		}
+		else Screen.changeScreen(Screen.MENU_SCREEN);
+
 		Screen.frame.setVisible(true);
 		this.dispose();
 	}
-	
+
 	public static void gameLoop(){
 		long startTime = System.currentTimeMillis();
 		long currTime = startTime;
-//		System.out.println("before while");
-		
+
 		while (!terrain.getWin() && !terrain.getExit()) {
 			int elapsedTime = (int)(System.currentTimeMillis() - currTime);
 			currTime = System.currentTimeMillis();
-//			System.out.println("before terrain update");
 			terrain.updateGame(elapsedTime);
-//			System.out.println("after terrain update");
-				try {
+			try {
 				Thread.sleep(DELAY);
 			}catch (InterruptedException e){
-			
 			}
 		}
-		
+
 	}
 	static ActionListener animate = new ActionListener(){
-	public void actionPerformed(ActionEvent arg0) {
+		public void actionPerformed(ActionEvent arg0) {
 			terrain.repaint();
 		}
 	};
-	
+
 }

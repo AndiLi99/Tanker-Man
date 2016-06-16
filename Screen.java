@@ -55,24 +55,20 @@ public class Screen {
 	private static int[] tankTracks;
 	private static int[] tankColor;	
 	static String message = "This should not be seen";
+	
 	public static void main (String args[]){
-
 		createAndShowGUI();
 
 		while(true){
-			while(true){
+			while(!startGame){
 				try {
 					Thread.sleep(100);
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				if (startGame){
-					break;
-				}
 			}
 
-			System.out.println("starting game");
 			gameScreen = new GameScreen(startMap, numPlayers, gameMode, maxHealth, maxFuel, tankTeam, tankTops, tankTracks, tankColor);
 			startGame = false;
 		}
@@ -114,7 +110,6 @@ public class Screen {
 		animationTimer.start();
 		//		frame.pack();
 		frame.setVisible(true);
-
 	}
 
 
@@ -130,41 +125,16 @@ public class Screen {
 		currentScreen = window;
 	}
 
-	public static void setMap(int startMap){
-		Screen.startMap = startMap;
-	}
-
-	public static void setPlayers(int numPlayers){
-		Screen.numPlayers = numPlayers;
-	}
-
-	public static void setGameMode (int gameMode){
-		Screen.gameMode = gameMode;
-	}
-
-	public static void setMaxHealth (int maxHealth){
-		Screen.maxHealth = maxHealth;
-	}
-
-	public static void setMaxFuel (int maxFuel){
-		Screen.maxFuel = maxFuel;
-	}
-
-	public static void setTankTeam (int [] tankTeam){
-		Screen.tankTeam = tankTeam;
-	}
-
-	public static void setTankTops(int [] tankTops){
-		Screen.tankTops = tankTops;
-	}
-
-	public static void setTankTracks(int [] tankTracks){
-		Screen.tankTracks = tankTracks;
-	}
-
-	public static void setTankColor (int [] tankColor){
-		Screen.tankColor = tankColor;
-	}
+	// Setters
+	public static void setMap(int startMap){ Screen.startMap = startMap; }
+	public static void setPlayers(int numPlayers){ Screen.numPlayers = numPlayers; }
+	public static void setGameMode (int gameMode){ Screen.gameMode = gameMode; }
+	public static void setMaxHealth (int maxHealth){ Screen.maxHealth = maxHealth; }
+	public static void setMaxFuel (int maxFuel){ Screen.maxFuel = maxFuel; }
+	public static void setTankTeam (int [] tankTeam){ Screen.tankTeam = tankTeam; }
+	public static void setTankTops(int [] tankTops){ Screen.tankTops = tankTops; }
+	public static void setTankTracks(int [] tankTracks){ Screen.tankTracks = tankTracks; }
+	public static void setTankColor (int [] tankColor){ Screen.tankColor = tankColor; }
 
 	static ActionListener animate = new ActionListener(){
 		public void actionPerformed(ActionEvent arg0) {
@@ -185,7 +155,6 @@ public class Screen {
 
 	public static void victory(String message) {
 		Screen.message = message;
-
 	}
 
 }

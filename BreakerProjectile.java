@@ -5,14 +5,14 @@ public class BreakerProjectile extends Projectile {
 	
 	public BreakerProjectile(Terrain terrain, double x, double y, int power, double angle, boolean split) {
 		super(terrain, x, y, power, angle);
-		damage = 10;
+		damage = 15;
 		explosion = 25;
 		projectileID = BREAKER_PROJECTILE;
 	}
 	
 	public BreakerProjectile(Terrain terrain, double x, double y, int velocityX, boolean split) {
 		super(terrain, x, y);
-		damage = 10;
+		damage = 15;
 		explosion = 25;
 		projectileID = BREAKER_PROJECTILE;
 		this.split = split;

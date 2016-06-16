@@ -42,7 +42,7 @@ public class VictoryScreen extends JPanel implements MouseMotionListener, MouseL
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		setLayout(null);
 
 		MenuScreen.setTitle();
@@ -87,34 +87,10 @@ public class VictoryScreen extends JPanel implements MouseMotionListener, MouseL
 		else
 			backButton.setForeground(new Color (2, 10, 33));
 	}
-	public void mouseClicked(MouseEvent e) {
-
-	}
-
-	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-
-	}
 
 	public void mouseReleased(MouseEvent e) {
 		if (inBackButton)
 			Screen.changeScreen(Screen.MENU_SCREEN);
-
-	}
-
-	public void mouseDragged(MouseEvent e) {
-		// TODO Auto-generated method stub
-
 	}
 
 	public void mouseMoved(MouseEvent e) {
@@ -137,4 +113,22 @@ public class VictoryScreen extends JPanel implements MouseMotionListener, MouseL
 		else 
 			inBackButton = false;
 	}
+
+	// Unused auto generated methods
+	public void mouseClicked(MouseEvent e) {
+	}
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+	}
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+	}
+
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+	}
+	public void mouseDragged(MouseEvent e) {
+		// TODO Auto-generated method stub
+	}
+
 }

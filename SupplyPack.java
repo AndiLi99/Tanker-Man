@@ -37,8 +37,6 @@ public class SupplyPack {
 		return false;
 	}
 	
-	public void resetY(){
-		y = terrain.getY(x);
-	}
+	public void resetY(){ y = terrain.getY(x); }
 	
 }

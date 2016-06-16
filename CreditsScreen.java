@@ -62,7 +62,6 @@ public class CreditsScreen extends JPanel implements MouseMotionListener, MouseL
 		setCreditLabels(); add(credits); 
 		setBackButton(); add(backButton);
 
-
 		setFocusable(true);
 		addMouseMotionListener(this);
 		addMouseListener(this);
@@ -88,8 +87,6 @@ public class CreditsScreen extends JPanel implements MouseMotionListener, MouseL
 		// Draw red tank
 		DrawTank.colorRed();
 		DrawTank.drawMountainTank(g, tankX2, tankY2, tankHeight, tankAngle, tankArmAngle2);
-		
-
 	}
 
 	public void setCreditLabels () {
@@ -114,34 +111,10 @@ public class CreditsScreen extends JPanel implements MouseMotionListener, MouseL
 		else
 			backButton.setForeground(new Color (2, 10, 33));
 	}
-	public void mouseClicked(MouseEvent e) {
-
-	}
-
-	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
+	
 	public void mouseReleased(MouseEvent e) {
 		if (inBackButton)
 			Screen.changeScreen(Screen.MENU_SCREEN);
-
-	}
-
-	public void mouseDragged(MouseEvent e) {
-		// TODO Auto-generated method stub
-
 	}
 
 	public void mouseMoved(MouseEvent e) {
@@ -165,6 +138,26 @@ public class CreditsScreen extends JPanel implements MouseMotionListener, MouseL
 		}
 		else 
 			inBackButton = false;
+	}
+	
+	// Auto generated unused methods
+	public void mouseClicked(MouseEvent e) {
+	}
+
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+	}
+
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+	}
+
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+	}
+
+	public void mouseDragged(MouseEvent e) {
+		// TODO Auto-generated method stub
 	}
 }
 

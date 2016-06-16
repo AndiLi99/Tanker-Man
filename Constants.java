@@ -43,6 +43,5 @@ public class Constants {
 	
 	// Other graphics variables
 	public static final int AIM_RADIUS = 150;
-
 	public static final int IN_GAME_TANK_HEIGHT = 18;
 }

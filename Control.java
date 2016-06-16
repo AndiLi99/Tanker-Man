@@ -40,9 +40,6 @@ public class Control {
 
 	static boolean clickFire = false;
 
-	public static void drawBackButton () {
-		
-	}
 	public static void drawBar (Graphics g) {
 		Graphics2D g2 = (Graphics2D) g;	
 		g2.setPaint(new GradientPaint(0, 350,  new Color (66, 66, 66), 0, 500, new Color (22, 22, 22)));

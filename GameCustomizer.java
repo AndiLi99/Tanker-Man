@@ -213,7 +213,7 @@ public class GameCustomizer extends JPanel implements MouseMotionListener, Mouse
 			fuels.add(txt);
 		}
 
-		battle = new TextReferences(SUBTITLE_X, SUBTITLE_Y + 4*SUBTITLE_HEIGHT, "Game: Free For All", SUBTITLE_LENGTH, SUBTITLE_HEIGHT, fontBold, color, -1);
+		battle = new TextReferences(SUBTITLE_X, SUBTITLE_Y + 4*SUBTITLE_HEIGHT, "Game Type: Free For All", SUBTITLE_LENGTH, SUBTITLE_HEIGHT, fontBold, color, -1);
 		for (int a = 0; a < battleType.length; a++) {
 			int X = SUBTITLE_X + a*mapDisplayLength/battleType.length + (mapDisplayLength/battleType.length - battleOptionLengths)/2;
 			int Y = SUBTITLE_Y + 5*SUBTITLE_HEIGHT; 

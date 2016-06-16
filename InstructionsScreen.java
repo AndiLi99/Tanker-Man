@@ -95,40 +95,16 @@ public class InstructionsScreen extends JPanel implements MouseMotionListener, M
 		else
 			backButton.setForeground(new Color (2, 10, 33));
 	}
-	public void mouseClicked(MouseEvent e) {
-
-	}
-
-	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void mouseReleased(MouseEvent e) {
-		if (inBackButton)
-			Screen.changeScreen(Screen.MENU_SCREEN);
-
-	}
-
-	public void mouseDragged(MouseEvent e) {
-		// TODO Auto-generated method stub
-
-	}
 
 	public void mouseMoved(MouseEvent e) {
 		int mouseX = e.getX(); int mouseY = e.getY();
 		setInBackButton(mouseX, mouseY);
 		setColorBackButton();
+	}
+	
+	public void mouseReleased(MouseEvent e) {
+		if (inBackButton)
+			Screen.changeScreen(Screen.MENU_SCREEN);
 	}
 
 	// Getters
@@ -144,5 +120,21 @@ public class InstructionsScreen extends JPanel implements MouseMotionListener, M
 		}
 		else 
 			inBackButton = false;
+	}
+	
+	// Unused auto generated methods
+	public void mouseClicked(MouseEvent e) {
+	}
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+	}
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+	}
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+	}
+	public void mouseDragged(MouseEvent e) {
+		// TODO Auto-generated method stub
 	}
 }
